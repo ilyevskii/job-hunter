@@ -41,37 +41,37 @@ Andreyeuski Ilya 153501
 
 ## Models restrictions
 
-###User
+### User
  - id: Must be unique and not null.
  - email: Must be unique, not null, and should follow the valid email format.
  - username: Must be unique and not null.
  - firstName and lastName: Not null.
  - createdAt: Not null and should be a valid timestamp.
    
-###Industry
+### Industry
 - id: Must be unique and not null.
 - name: Not null.
 
-###Employer
+### Employer
 - id: Must be unique and not null.
 - industryId: Not null and must reference a valid Industry.id.
 - name and location: Not null.
 - createdAt: Not null and should be a valid timestamp.
   
-###Job
+### Job
 - id: Must be unique and not null.
 - employerId: Not null and must reference a valid Employer.id.
 - title, description, and location: Not null.
 - salaryFrom and salaryTo: Not null, where salaryFrom should be <= salaryTo.
 - createdAt: Not null and should be a valid timestamp.
 
-###Resume
+### Resume
 - id: Must be unique and not null.
 - userId: Not null and must reference a valid User.id.
 - title and content: Not null.
 - createdAt: Not null and should be a valid timestamp.
   
-###Application
+### Application
 - id: Must be unique and not null.
 - userId: Not null and must reference a valid User.id.
 - jobId: Not null and must reference a valid Job.id.
@@ -79,33 +79,33 @@ Andreyeuski Ilya 153501
 - status: Not null and might have predefined values like 'Pending', 'Approved', 'Rejected', etc.
 - createdAt: Not null and should be a valid timestamp.
 
-###Token
+### Token
 - id: Must be unique and not null.
 - userId: Not null and must reference a valid User.id.
 - value: Not null.
 - createdAt and expiresAt: Not null and should be valid timestamps.
 
-###Review
+### Review
 - id: Must be unique and not null.
 - employerId: Not null and must reference a valid Employer.id.
 - userId: Not null and must reference a valid User.id.
 - rating: Not null and possibly between a range, e.g., 1-5.
 - createdAt: Not null and should be a valid timestamp.
 
-###Comment
+### Comment
 - id: Must be unique and not null.
 - userId: Not null and must reference a valid User.id.
 - jobId: Not null and must reference a valid Job.id.
 - text: Not null.
 - createdAt: Not null and should be a valid timestamp.
 
-###Feedback
+### Feedback
 - id: Must be unique and not null.
 - applicationId: Not null and must reference a valid Application.id.
 - content: Not null.
 - createdAt: Not null and should be a valid timestamp.
   
-###Admin
+### Admin
 - id: Must be unique and not null.
 - userId: Not null and must reference a valid User.id.
 - The boolean permissions fields: Should either be true or false.
