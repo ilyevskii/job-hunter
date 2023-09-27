@@ -1,5 +1,7 @@
 # Platform for Job Hunting
 
+Andreyeuski Ilya 153501
+
 ## Functional requirements
 
 ### 1. Authorized User Flow:
