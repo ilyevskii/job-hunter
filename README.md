@@ -2,55 +2,42 @@
 
 ## Functional requirements
 
-### 1. User Management
-- **1.1. Registration & Login**
-  - Users can register with an email, username, first name, and last name.
-  - Users can log in using their registered email.
+### 1. Authorized User Flow:
+- Users can register with an email, username, first name, and last name.
+- Users can log in using their registered email.
+- Users can view and update their personal details (firstName, lastName, email, username).
+- Users can view a list of industries with their name and description.
+- Users can view available jobs including job details like title, description, location, salary range, and associated employer.
+- Users can add comments on jobs.
+- Users can view comments left by others on jobs.
+- Users can create and manage resume, specifying the title and content.
+- Users can apply for jobs by submitting their resume.
+- Users can view the status of their application.
+- After an application process, users can provide feedback on the application. This feedback is linked to the specific application.
 
-- **1.2. Profile Management**
-  - Users can view and update their personal details (firstName, lastName, email, username).
+### 2. Unauthorized User Flow:
+- Users can view a list of industries with their name and description.
+- Users can view available jobs including job details like title, description, location, salary range, and associated employer.
+- Users can view comments left by others on job listings.
 
-### 2. Industry Management
-- **2.1. Browsing**
-  - Users can view a list of industries with their name and description.
+### 3. Employer Flow:
+- Employers can register with an email, company name, and other essential details.
+- Employers can log in using their registered email.
+- Employers can create and manage their company profile, which includes associating with an industry, updating company details such as name, location, number of workers, and the date the company was established, uploading company logos and other relevant media.
+- Employers can post new job listings with details like job title, description, location, salary range, and other relevant details.
+- Employers can view, edit, or delete their job listings.
+- Employers can view applications received for their job listings. This includes viewing the resumes and details of the applicants.
+- Employers can change the status of applications (e.g., shortlisted, rejected, or accepted).
+- Employers can respond to user reviews, addressing concerns or thanking users for positive feedback.
 
-### 3. Employer Features
-- **3.1. Employer Profile**
-  - Employers can be associated with an industry.
-  - Users can view details of an employer including name, location, number of workers, associated industry, and the date the employer was created.
-
-- **3.2. Reviews**
-  - Users can submit reviews for employers including ratings and comments.
-  - Users can view reviews of different employers.
-
-### 4. Job Listings
-- **4.1. Browsing**
-  - Users can view available jobs including job details like title, description, location, salary range, and associated employer.
-
-- **4.2. Comments**
-  - Users can add comments on job listings.
-  - Users can view comments left by others on job listings.
-
-### 5. Resumes
-- **5.1. Creation & Management**
-  - Users can create and manage multiple resumes, specifying the title and content of the resume.
-
-### 6. Job Applications
-- **6.1. Application Process**
-  - Users can apply for jobs by submitting one of their created resumes.
-  - Users can view the status of their application (e.g., pending, accepted, rejected).
-
-- **6.2. Feedback**
-  - After an application process, users can provide feedback on the application. This feedback is linked to the specific application.
-
-### 7. User Authentication Tokens
-- **7.1. Token Generation**
-  - Upon successful login, users are issued a token for authentication.
-  - Tokens have an expiration time.
-
-- **7.2. Token Validation**
-  - User actions that require authentication are validated using their issued token.
+### 4. Admin Flow:
+- Admins can manage the list of industries, adding, editing, or deleting entries.
+- Admins can view, edit, or delete any employer profile.
+- Admins can view, edit, or delete any user profile.
+- Admins can manage job listings, including approving, editing, or deleting them.
+- Admins can manage user reviews and comments, including approving, editing, or deleting them.
 
 ## Database diagram
 
-![Untitled (1)](https://github.com/ilyevskii/job-hunter/assets/95957223/2f6a193c-5714-4f9a-8e00-e797fb5992f0)
+![Untitled (2)](https://github.com/ilyevskii/job-hunter/assets/95957223/ef535669-ecfe-45c4-993a-0c8c5f2af11a)
+
