@@ -3,7 +3,7 @@
 ## Functional requirements
 
 ### 1. Authorized User Flow:
-- Users can register with an email, username, first name, and last name.
+- Users can register with an email (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/), username, first name, and last name.
 - Users can log in using their registered email.
 - Users can view and update their personal details (firstName, lastName, email, username).
 - Users can view a list of industries with their name and description.
