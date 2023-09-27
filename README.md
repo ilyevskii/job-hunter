@@ -42,76 +42,75 @@ Andreyeuski Ilya 153501
 ## Models restrictions
 
 ### User
- - id: Must be unique and not null.
- - email: Must be unique, not null, and should follow the valid email format.
- - username: Must be unique and not null.
- - firstName and lastName: Not null.
- - createdAt: Not null and should be a valid timestamp.
-   
+- id (integer): Must be unique and not null.
+- email (string): Must be unique, not null, and should follow the valid email format.
+- username (string): Must be unique and not null.
+- firstName (string), lastName (string): Not null.
+- createdAt (timestamp): Not null and should be a valid timestamp.
+
 ### Industry
-- id: Must be unique and not null.
-- name: Not null.
+- id (integer): Must be unique and not null.
+- name (string): Not null.
 
 ### Employer
-- id: Must be unique and not null.
-- industryId: Not null and must reference a valid Industry.id.
-- name and location: Not null.
-- createdAt: Not null and should be a valid timestamp.
-  
+- id (integer): Must be unique and not null.
+- industryId (integer): Not null and must reference a valid Industry.id.
+- name (string), location (string): Not null.
+- createdAt (timestamp): Not null and should be a valid timestamp.
+
 ### Job
-- id: Must be unique and not null.
-- employerId: Not null and must reference a valid Employer.id.
-- title, description, and location: Not null.
-- salaryFrom and salaryTo: Not null, where salaryFrom should be <= salaryTo.
-- createdAt: Not null and should be a valid timestamp.
+- id (integer): Must be unique and not null.
+- employerId (integer): Not null and must reference a valid Employer.id.
+- title (string), description (string), location (string): Not null.
+- salaryFrom (integer), salaryTo (integer): Not null, where salaryFrom should be <= salaryTo.
+- createdAt (timestamp): Not null and should be a valid timestamp.
 
 ### Resume
-- id: Must be unique and not null.
-- userId: Not null and must reference a valid User.id.
-- title and content: Not null.
-- createdAt: Not null and should be a valid timestamp.
-  
+- id (integer): Must be unique and not null.
+- userId (integer): Not null and must reference a valid User.id.
+- title (string), content (string): Not null.
+- createdAt (timestamp): Not null and should be a valid timestamp.
+
 ### Application
-- id: Must be unique and not null.
-- userId: Not null and must reference a valid User.id.
-- jobId: Not null and must reference a valid Job.id.
-- resumeId: Not null and must reference a valid Resume.id.
-- status: Not null and might have predefined values like 'Pending', 'Approved', 'Rejected', etc.
-- createdAt: Not null and should be a valid timestamp.
+- id (integer): Must be unique and not null.
+- userId (integer): Not null and must reference a valid User.id.
+- jobId (integer): Not null and must reference a valid Job.id.
+- resumeId (integer): Not null and must reference a valid Resume.id.
+- status (string): Not null and might have predefined values like 'Pending', 'Approved', 'Rejected', etc.
+- createdAt (timestamp): Not null and should be a valid timestamp.
 
 ### Token
-- id: Must be unique and not null.
-- userId: Not null and must reference a valid User.id.
-- value: Not null.
-- createdAt and expiresAt: Not null and should be valid timestamps.
+- id (integer): Must be unique and not null.
+- userId (integer): Not null and must reference a valid User.id.
+- value (string): Not null.
+- createdAt (timestamp), expiresAt (timestamp): Not null and should be valid timestamps.
 
 ### Review
-- id: Must be unique and not null.
-- employerId: Not null and must reference a valid Employer.id.
-- userId: Not null and must reference a valid User.id.
-- rating: Not null and possibly between a range, e.g., 1-5.
-- createdAt: Not null and should be a valid timestamp.
+- id (integer): Must be unique and not null.
+- employerId (integer): Not null and must reference a valid Employer.id.
+- userId (integer): Not null and must reference a valid User.id.
+- rating (integer): Not null and possibly between a range, e.g., 1-5.
+- createdAt (timestamp): Not null and should be a valid timestamp.
 
 ### Comment
-- id: Must be unique and not null.
-- userId: Not null and must reference a valid User.id.
-- jobId: Not null and must reference a valid Job.id.
-- text: Not null.
-- createdAt: Not null and should be a valid timestamp.
+- id (integer): Must be unique and not null.
+- userId (integer): Not null and must reference a valid User.id.
+- jobId (integer): Not null and must reference a valid Job.id.
+- text (string): Not null.
+- createdAt (timestamp): Not null and should be a valid timestamp.
 
 ### Feedback
-- id: Must be unique and not null.
-- applicationId: Not null and must reference a valid Application.id.
-- content: Not null.
-- createdAt: Not null and should be a valid timestamp.
-  
+- id (integer): Must be unique and not null.
+- applicationId (integer): Not null and must reference a valid Application.id.
+- content (string): Not null.
+- createdAt (timestamp): Not null and should be a valid timestamp.
+
 ### Admin
-- id: Must be unique and not null.
-- userId: Not null and must reference a valid User.id.
+- id (integer): Must be unique and not null.
+- userId (integer): Not null and must reference a valid User.id.
 - The boolean permissions fields: Should either be true or false.
 
 ## Database diagram
 
 ![Untitled (3)](https://github.com/ilyevskii/job-hunter/assets/95957223/2cb4867b-2274-4876-b7fd-58a0c8b73380)
-
 
