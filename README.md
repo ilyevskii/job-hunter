@@ -45,6 +45,7 @@ Andreyeuski Ilya 153501
 - id (integer): Must be unique and not null.
 - email (string): Must be unique, not null, and should follow the valid email format.
 - username (string): Must be unique and not null.
+- passwordHash (string): Must be correct hash.
 - firstName (string), lastName (string): Not null.
 - createdAt (timestamp): Not null and should be a valid timestamp.
 
