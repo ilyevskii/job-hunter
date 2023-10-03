@@ -112,5 +112,5 @@ Andreyeuski Ilya 153501
 
 ## Database diagram
 
-![Untitled (3)](https://github.com/ilyevskii/job-hunter/assets/95957223/2cb4867b-2274-4876-b7fd-58a0c8b73380)
+![Untitled (6)](https://github.com/ilyevskii/job-hunter/assets/95957223/088dec5e-fe0c-4328-8cc2-adfbbc49f916)
 
