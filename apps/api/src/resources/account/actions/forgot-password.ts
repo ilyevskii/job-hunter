@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import { AppKoaContext, Next, AppRouter, Template, User } from 'types';
+import { AppKoaContext, Next, AppRouter, Template } from 'types';
 import { EMAIL_REGEX } from 'app-constants';
+import { User } from '@prisma/client';
 
 import { userService } from 'resources/user';
 
@@ -36,9 +37,9 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
   if (!resetPasswordToken) {
     resetPasswordToken = await securityUtil.generateSecureToken();
 
-    await userService.updateOne({ _id: user._id }, () => ({
+    await userService.updateOne({ id: user.id }, {
       resetPasswordToken,
-    }));
+    });
   }
 
   const resetPasswordUrl = `${config.API_URL}/account/verify-reset-token?token=${resetPasswordToken}&email=${encodeURIComponent(user.email)}`;

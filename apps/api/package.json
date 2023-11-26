@@ -11,8 +11,7 @@
     "test:unit": "jest --runInBand -c ./jest.config.ts --collectCoverage false",
     "dev": "NODE_ENV=development APP_ENV=development ts-node-dev --respawn --transpile-only src/app.ts",
     "start": "ts-node src/app.ts",
-    "migrate-dev": "NODE_ENV=development APP_ENV=development ts-node src/migrator.ts",
-    "migrate": "ts-node src/migrator.ts",
+    "migrate-dev": "NODE_ENV=development APP_ENV=development",
     "schedule-dev": "NODE_ENV=development APP_ENV=development ts-node-dev --respawn --transpile-only src/scheduler.ts",
     "schedule": "ts-node src/scheduler.ts",
     "precommit": "lint-staged"
@@ -25,6 +24,7 @@
     "@koa/multer": "3.0.2",
     "@koa/router": "12.0.0",
     "@paralect/node-mongo": "3.1.2",
+    "@prisma/client": "5.6.0",
     "@sendgrid/mail": "7.7.0",
     "@socket.io/redis-adapter": "8.1.0",
     "@socket.io/redis-emitter": "5.1.0",
@@ -48,13 +48,14 @@
     "moment-duration-format": "2.3.2",
     "node-schedule": "2.1.1",
     "npm": "9.6.1",
+    "prisma": "5.6.0",
     "psl": "1.9.0",
     "redis": "4.6.5",
-    "schemas": "workspace:*",
     "socket.io": "4.6.1",
     "types": "workspace:*",
     "winston": "3.8.2",
-    "zod": "3.21.4"
+    "zod": "3.21.4",
+    "database": "workspace:*"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "4.1.7",

@@ -1,6 +1,6 @@
 import { eventBus, InMemoryEvent } from '@paralect/node-mongo';
 
-import { User } from 'types';
+import { User } from '@prisma/client';
 import { DATABASE_DOCUMENTS } from 'app-constants';
 
 import logger from 'logger';

@@ -37,7 +37,6 @@
     "react-dom": "18.2.0",
     "react-hook-form": "7.43.5",
     "react-query": "3.39.3",
-    "schemas": "workspace:*",
     "socket.io-client": "4.6.1",
     "types": "workspace:*",
     "zod": "3.21.4"

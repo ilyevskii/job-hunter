@@ -1,6 +1,6 @@
 import { Database } from '@paralect/node-mongo';
 
-import { User } from 'types';
+import { User } from '@prisma/client';
 import { userSchema } from 'schemas';
 import { DATABASE_DOCUMENTS } from 'app-constants';
 

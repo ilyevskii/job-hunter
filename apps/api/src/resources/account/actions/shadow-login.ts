@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-import { AppKoaContext, Next, AppRouter, User } from 'types';
+import { AppKoaContext, Next, AppRouter } from 'types';
+import { User } from '@prisma/client';
 
 import { userService } from 'resources/user';
 

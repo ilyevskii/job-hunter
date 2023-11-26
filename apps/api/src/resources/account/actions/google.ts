@@ -37,15 +37,12 @@ const signInGoogleWithCode = async (ctx: AppKoaContext) => {
   if (user) {
     if (!user.oauth?.google) {
       userChanged = await userService.updateOne(
-        { _id: user._id },
-        (old) => ({ ...old, oauth: { google: true } }),
+        { id: user.id },
+        { oauth: { google: true } },
       );
     }
     const userUpdated = userChanged || user;
-    await Promise.all([
-      userService.updateLastRequest(userUpdated._id),
-      authService.setTokens(ctx, userUpdated._id),
-    ]);
+    await authService.setTokens(ctx, userUpdated.id);
 
   } else {
     const lastName = payload.family_name || '';

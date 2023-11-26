@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-import { AppKoaContext, AppRouter, User } from 'types';
+import { AppKoaContext, AppRouter } from 'types';
 import { EMAIL_REGEX } from 'app-constants';
+import { User } from '@prisma/client';
 
 import { userService } from 'resources/user';
 
