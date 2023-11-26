@@ -42,8 +42,8 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
   const { user } = ctx.state;
 
   const updatedUser = await userService.updateOne(
-    { _id: user._id },
-    () => _.pickBy(ctx.validatedData),
+    { id: user.id },
+    _.pickBy(ctx.validatedData),
   );
 
   ctx.body = userService.getPublic(updatedUser);

@@ -1,16 +1,13 @@
-import { Token, TokenType } from 'types';
-import { tokenSchema } from 'schemas';
-import { DATABASE_DOCUMENTS, TOKEN_SECURITY_LENGTH } from 'app-constants';
-
-import { securityUtil } from 'utils';
-
 import db from 'db';
+import { securityUtil } from 'utils';
+import { DatabaseService } from 'services';
 
-const service = db.createService<Token>(DATABASE_DOCUMENTS.TOKENS, {
-  schemaValidator: (obj) => tokenSchema.parseAsync(obj),
-});
+import { DATABASE_DOCUMENTS, TOKEN_SECURITY_LENGTH } from 'app-constants';
+import { Token, TokenType } from 'types';
 
-const createToken = async (userId: string, type: TokenType, isShadow?: boolean) => {
+const service = new DatabaseService<Token>(db, DATABASE_DOCUMENTS.TOKENS);
+
+const createToken = async (userId: number, type: TokenType, isShadow?: boolean) => {
   const value = await securityUtil.generateSecureToken(TOKEN_SECURITY_LENGTH);
 
   return service.insertOne({
@@ -24,11 +21,11 @@ const createToken = async (userId: string, type: TokenType, isShadow?: boolean) 
 const createAuthTokens = async ({
   userId,
   isShadow,
-}: { userId: string, isShadow?: boolean }) => {
+}: { userId: number, isShadow?: boolean }) => {
   const accessTokenEntity = await createToken(userId, TokenType.ACCESS, isShadow);
 
   return {
-    accessToken: accessTokenEntity.value,
+    accessToken: accessTokenEntity?.value,
   };
 };
 
@@ -42,7 +39,7 @@ const findTokenByValue = async (token: string) => {
 };
 
 const removeAuthTokens = async (accessToken: string) => {
-  return service.deleteMany({ value: { $in: [accessToken] } });
+  return service.deleteMany({ value: accessToken });
 };
 
 export default Object.assign(service, {

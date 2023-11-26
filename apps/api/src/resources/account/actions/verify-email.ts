@@ -31,17 +31,14 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
   const { user } = ctx.validatedData;
 
   await userService.updateOne(
-    { _id: user._id },
-    () => ({
+    { id: user.id },
+    {
       isEmailVerified: true,
       signupToken: null,
-    }),
+    },
   );
 
-  await Promise.all([
-    userService.updateLastRequest(user._id),
-    authService.setTokens(ctx, user._id),
-  ]);
+  await authService.setTokens(ctx, user.id);
 
   await emailService.sendTemplate<Template.SIGN_UP_WELCOME>({
     to: user.email,

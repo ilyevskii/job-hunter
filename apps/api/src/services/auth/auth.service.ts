@@ -3,7 +3,7 @@ import { tokenService } from 'resources/token';
 
 import cookieHelper from './auth.helper';
 
-const setTokens = async (ctx: AppKoaContext, userId: string, isShadow?: boolean) => {
+const setTokens = async (ctx: AppKoaContext, userId: number, isShadow?: boolean) => {
   const { accessToken } = await tokenService.createAuthTokens({ userId, isShadow });
 
   if (accessToken) {

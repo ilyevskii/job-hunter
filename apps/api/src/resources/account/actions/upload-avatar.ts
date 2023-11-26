@@ -26,12 +26,12 @@ async function handler(ctx: AppKoaContext) {
     await cloudStorageService.deleteObject(fileKey);
   }
 
-  const fileName = `${user._id}-${Date.now()}-${file.originalname}`;
+  const fileName = `${user.id}-${Date.now()}-${file.originalname}`;
   const { Location } = await cloudStorageService.uploadPublic(`avatars/${fileName}`, file);
 
   const updatedUser = await userService.updateOne(
-    { _id: user._id },
-    () => ({ avatarUrl: Location }),
+    { id: user.id },
+    { avatarUrl: Location },
   );
 
   ctx.body = userService.getPublic(updatedUser);

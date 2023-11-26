@@ -1,11 +1,10 @@
 import _ from 'lodash';
 
-import { DATABASE_DOCUMENTS } from 'app-constants';
-
 import db from 'db';
 import { DatabaseService } from 'services';
 
-import { User } from '@prisma/client';
+import { DATABASE_DOCUMENTS } from 'app-constants';
+import { User } from 'types';
 
 const service = new DatabaseService<User>(db, DATABASE_DOCUMENTS.USERS);
 

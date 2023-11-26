@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from 'database';
 
 class DatabaseService<T extends object> {
   private prisma: PrismaClient;
@@ -10,7 +10,7 @@ class DatabaseService<T extends object> {
     this.tableName = tableName;
   }
 
-  public async insertOne(data: T): Promise<number> {
+  public async insertOne(data: Partial<T>): Promise<T> {
     const fields = Object.keys(data).join(', ');
     const values = Object.values(data);
     const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
@@ -57,6 +57,27 @@ class DatabaseService<T extends object> {
       ...conditionValues,
     );
   }
+
+  public async deleteOne(where: Partial<T>): Promise<T | null> {
+    const conditions = Object.entries(where)
+      .map(([key], index) => `${key} = $${index + 1}`)
+      .join(' AND ');
+    const values = Object.values(where);
+
+    const query = `DELETE FROM ${this.tableName} WHERE ${conditions} LIMIT 1;`;
+    return this.prisma.$queryRaw(Prisma.raw(query), ...values);
+  }
+
+  public async deleteMany(where: Partial<T>): Promise<number> {
+    const conditions = Object.entries(where)
+      .map(([key], index) => `${key} = $${index + 1}`)
+      .join(' AND ');
+    const values = Object.values(where);
+
+    const query = `DELETE FROM ${this.tableName} WHERE ${conditions};`;
+    return this.prisma.$executeRaw(Prisma.raw(query), ...values);
+  }
+
 }
 
 export default DatabaseService;

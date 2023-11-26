@@ -26,7 +26,7 @@ interface ValidatedData extends z.infer<typeof schema> {
 async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
   const { email } = ctx.validatedData;
 
-  const isUserExists = await userService.exists({ email });
+  const isUserExists = await userService.findOne({ email });
 
   ctx.assertClientError(!isUserExists, {
     email: 'User with this email is already registered',
@@ -52,7 +52,6 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
     email,
     firstName,
     lastName,
-    fullName: `${firstName} ${lastName}`,
     passwordHash: hash.toString(),
     isEmailVerified: false,
     signupToken,
