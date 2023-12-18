@@ -16,6 +16,7 @@ export enum RoutePath {
   // Auth paths
   SignIn = '/sign-in',
   SignUp = '/sign-up',
+  EmployerSignUp = '/employer-sign-up',
   ForgotPassword = '/forgot-password',
   ResetPassword = '/reset-password',
   ExpireToken = '/expire-token',
@@ -47,6 +48,10 @@ export const routesConfiguration: RoutesConfiguration = {
     layout: LayoutType.UNAUTHORIZED,
   },
   [RoutePath.SignUp]: {
+    scope: ScopeType.PUBLIC,
+    layout: LayoutType.UNAUTHORIZED,
+  },
+  [RoutePath.EmployerSignUp]: {
     scope: ScopeType.PUBLIC,
     layout: LayoutType.UNAUTHORIZED,
   },

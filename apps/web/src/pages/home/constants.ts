@@ -1,25 +1,30 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { ComboboxItem } from '@mantine/core';
 
-import { User } from 'types';
+import { JobWithEmployer } from 'types';
 
 export const PER_PAGE = 5;
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<JobWithEmployer>[] = [
   {
-    accessorKey: 'firstName',
-    header: 'First Name',
+    accessorKey: 'id',
+    header: '№',
     cell: (info) => info.getValue(),
   },
   {
-    accessorKey: 'lastName',
-    header: 'Last Name',
+    accessorKey: 'title',
+    header: 'Title',
     cell: (info) => info.getValue(),
   },
   {
-    accessorKey: 'email',
-    header: 'Email',
-    cell: (info) => info.getValue(),
+    accessorKey: 'companyName',
+    header: 'Company name',
+    cell: (info) => info.cell.row.original.employer.name,
+  },
+  {
+    accessorKey: 'location',
+    header: 'Location',
+    cell: (info) => info.cell.row.original.location,
   },
 ];
 

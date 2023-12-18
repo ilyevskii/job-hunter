@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Head from 'next/head';
 import { NextPage } from 'next';
@@ -14,7 +14,7 @@ import {
   Text,
   Checkbox,
   SimpleGrid,
-  Tooltip,
+  Tooltip, NumberInput,
 } from '@mantine/core';
 
 import { accountApi } from 'resources/account';
@@ -26,13 +26,15 @@ import { RoutePath } from 'routes';
 
 import { EMAIL_REGEX, PASSWORD_REGEX } from 'app-constants';
 
-import { GoogleIcon } from 'public/icons';
-
 const schema = z.object({
-  firstName: z.string().min(1, 'Please enter First name').max(100),
-  lastName: z.string().min(1, 'Please enter Last name').max(100),
+  name: z.string().min(1, 'Please enter name').max(100),
+  location: z.string().min(1, 'Please enter location').max(100),
+  numberOfWorkers: z.string().transform(Number),
   email: z.string().regex(EMAIL_REGEX, 'Email format is incorrect.'),
-  password: z.string().regex(PASSWORD_REGEX, 'The password must contain 6 or more characters with at least one letter (a-z) and one number (0-9).'),
+  password: z.string().regex(
+    PASSWORD_REGEX,
+    'The password must contain 6 or more characters with at least one letter (a-z) and one number (0-9).',
+  ),
 });
 
 type SignUpParams = z.infer<typeof schema>;
@@ -65,6 +67,7 @@ const SignUp: NextPage = () => {
     handleSubmit,
     setError,
     watch,
+    control,
     formState: { errors },
   } = useForm<SignUpParams>({
     resolver: zodResolver(schema),
@@ -82,17 +85,24 @@ const SignUp: NextPage = () => {
     setPasswordRulesData(updatedPasswordRulesData);
   }, [passwordValue]);
 
-  const { mutate: signUp, isLoading: isSignUpLoading } = accountApi.useSignUp<SignUpParams>();
+  const {
+    mutate: signUp,
+    isLoading: isSignUpLoading,
+  } = accountApi.useEmployerSignUp<SignUpParams>();
 
-  const onSubmit = (data: SignUpParams) => signUp(data, {
-    onSuccess: (response: any) => {
-      if (response.signupToken) setSignupToken(response.signupToken);
+  const onSubmit = (data: SignUpParams) => {
+    console.log('a');
 
-      setRegistered(true);
-      setEmail(data.email);
-    },
-    onError: (e) => handleError(e, setError),
-  });
+    signUp(data, {
+      onSuccess: (response: any) => {
+        if (response.signupToken) setSignupToken(response.signupToken);
+
+        setRegistered(true);
+        setEmail(data.email);
+      },
+      onError: (e) => handleError(e, setError),
+    });
+  };
 
   const label = (
     <SimpleGrid
@@ -117,7 +127,7 @@ const SignUp: NextPage = () => {
     return (
       <>
         <Head>
-          <title>Sign up</title>
+          <title>Employer Sign up</title>
         </Head>
 
         <Stack w={450}>
@@ -146,29 +156,43 @@ const SignUp: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Sign up</title>
+        <title>Employer Sign up</title>
       </Head>
 
       <Stack w={408} gap={20}>
         <Stack gap={20}>
-          <Title order={1}>Sign Up</Title>
+          <Title order={1}>Employer sign up</Title>
 
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack gap={20}>
               <TextInput
-                {...register('firstName')}
-                label="First Name"
+                {...register('name')}
+                label="Name"
                 maxLength={100}
-                placeholder="First Name"
-                error={errors.firstName?.message}
+                placeholder="Name"
+                error={errors.name?.message}
               />
 
               <TextInput
-                {...register('lastName')}
-                label="Last Name"
+                {...register('location')}
+                label="Location"
                 maxLength={100}
-                placeholder="Last Name"
-                error={errors.lastName?.message}
+                placeholder="Location"
+                error={errors.location?.message}
+              />
+
+              <Controller
+                name="numberOfWorkers"
+                control={control}
+                render={({ field }) => (
+                  <NumberInput
+                    {...field}
+                    label="Number of workers"
+                    max={100000}
+                    placeholder="Number of workers"
+                    error={errors.numberOfWorkers?.message}
+                  />
+                )}
               />
 
               <TextInput
@@ -205,42 +229,17 @@ const SignUp: NextPage = () => {
           </form>
         </Stack>
 
-        <Stack gap={34}>
-          <Button
-            component="a"
-            leftSection={<GoogleIcon />}
-            href={`${config.API_URL}/account/sign-in/google/auth`}
-            variant="outline"
+        <Group fz={16} justify="center" gap={12}>
+          Have an account?
+          <Link
+            type="router"
+            href={RoutePath.SignIn}
+            inherit
+            underline={false}
           >
-            Continue with Google
-          </Button>
-
-          <Stack gap={6}>
-            <Group fz={16} justify="center" gap={12}>
-              Have an account?
-              <Link
-                type="router"
-                href={RoutePath.SignIn}
-                inherit
-                underline={false}
-              >
-                Sign In
-              </Link>
-            </Group>
-
-            <Group fz={16} justify="center" gap={12}>
-              You can
-              <Link
-                type="router"
-                href={RoutePath.EmployerSignUp}
-                inherit
-                underline={false}
-              >
-                sign up as Employer
-              </Link>
-            </Group>
-          </Stack>
-        </Stack>
+            Sign In
+          </Link>
+        </Group>
       </Stack>
     </>
   );

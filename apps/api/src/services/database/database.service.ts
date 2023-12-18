@@ -1,6 +1,7 @@
 import db from 'db';
 
 import { PrismaClient } from 'database';
+import { number } from 'zod';
 
 class DatabaseService<T extends object> {
   private prisma: PrismaClient;
@@ -49,14 +50,54 @@ class DatabaseService<T extends object> {
 
   }
 
-  public async findAll(where: Partial<T>): Promise<T[] | null> {
-    const conditions = Object.entries(where)
+  public async findAll({
+    where,
+    page = 1,
+    perPage = 10,
+    search,
+  } : {
+    where: Partial<T>,
+    page?: number,
+    perPage?: number,
+    search?: {
+      columns: string[],
+      value: string,
+    },
+    sort?: {
+      column: string,
+      direction: 'ASC' | 'DESC',
+    }
+  }): Promise<T[] | null> {
+    let conditions = Object.entries(where)
       .map(([key], index) => `"${key}" = $${index + 1}`)
       .join(' AND ');
+
     const values = Object.values(where);
 
-    const query = `SELECT * FROM "${this.tableName}" WHERE ${conditions};`;
-    return this.prisma.$queryRawUnsafe(query, ...values);
+    if (search) {
+      const searchCondition = search.columns
+        .map(column => `"${column}" ILIKE $${values.length + 1}`)
+        .join(' OR ');
+
+      if (conditions) {
+        conditions += ' AND (' + searchCondition + ')';
+      } else {
+        conditions = searchCondition;
+      }
+
+      values.push(`%${search.value}%`);
+    }
+
+    const offset = (page - 1) * perPage;
+
+    const query = `
+    SELECT * FROM "${this.tableName}"
+    ${conditions ? 'WHERE ' + conditions : ''}
+    LIMIT $${values.length + 1}
+    OFFSET $${values.length + 2};
+    `;
+
+    return this.prisma.$queryRawUnsafe(query, ...values, perPage, offset);
   }
 
   public async findOne(where: Partial<T>): Promise<T | null> {
@@ -85,7 +126,7 @@ class DatabaseService<T extends object> {
 
     if (!result) return 0;
 
-    return result[0].count;
+    return Number(result[0].count);
   }
 
   public async deleteOne(where: Partial<T>): Promise<number> {

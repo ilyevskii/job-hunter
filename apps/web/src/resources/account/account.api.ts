@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
 
-import { User } from 'types';
+import { User, Employer } from 'types';
 
 import { apiService } from 'services';
 
@@ -36,6 +36,16 @@ export function useSignUp<T>() {
   return useMutation<SignUpResponse, unknown, T>(signUp);
 }
 
+export function useEmployerSignUp<T>() {
+  const signUp = (data: T) => apiService.post('/account/employer-sign-up', data);
+
+  interface SignUpResponse {
+    signupToken: string;
+  }
+
+  return useMutation<SignUpResponse, unknown, T>(signUp);
+}
+
 export function useForgotPassword<T>() {
   const forgotPassword = (data: T) => apiService.post('/account/forgot-password', data);
 
@@ -57,7 +67,7 @@ export function useResendEmail<T>() {
 export function useGet(options? : {}) {
   const get = () => apiService.get('/account');
 
-  return useQuery<User>(['account'], get, options);
+  return useQuery<User & Partial<Employer>>(['account'], get, options);
 }
 
 export function useUpdate<T>() {

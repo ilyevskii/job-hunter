@@ -16,9 +16,8 @@ import {
 import { useDebouncedValue, useInputState } from '@mantine/hooks';
 import { IconSearch, IconX, IconSelector } from '@tabler/icons-react';
 import { RowSelectionState, SortingState } from '@tanstack/react-table';
-import { DatePickerInput, DatesRangeValue } from '@mantine/dates';
 
-import { userApi } from 'resources/user';
+import { jobApi } from 'resources/job';
 
 import { Table } from 'components';
 
@@ -31,13 +30,7 @@ interface UsersListParams {
   perPage?: number;
   searchValue?: string;
   sort?: {
-    createdOn: 'asc' | 'desc';
-  };
-  filter?: {
-    createdOn?: {
-      sinceDate: Date | null;
-      dueDate: Date | null;
-    };
+    createdOn: 'ASC' | 'DESC';
   };
 }
 
@@ -46,7 +39,6 @@ const Home: NextPage = () => {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [sortBy, setSortBy] = useState(selectOptions[0].value);
-  const [filterDate, setFilterDate] = useState<DatesRangeValue>();
 
   const [params, setParams] = useState<UsersListParams>({});
 
@@ -56,41 +48,24 @@ const Home: NextPage = () => {
     setSortBy(value);
     setParams((prev) => ({
       ...prev,
-      sort: value === 'newest' ? { createdOn: 'desc' } : { createdOn: 'asc' },
+      sort: value === 'newest' ? { createdOn: 'DESC' } : { createdOn: 'ASC' },
     }));
-  }, []);
-
-  const handleFilter = useCallback(([sinceDate, dueDate]: DatesRangeValue) => {
-    setFilterDate([sinceDate, dueDate]);
-
-    if (!sinceDate) {
-      setParams((prev) => ({
-        ...prev,
-        filter: {},
-      }));
-    }
-
-    if (dueDate) {
-      setParams((prev) => ({
-        ...prev,
-        filter: { createdOn: { sinceDate, dueDate } },
-      }));
-    }
   }, []);
 
   useLayoutEffect(() => {
     setParams((prev) => ({ ...prev, page: 1, searchValue: debouncedSearch, perPage: PER_PAGE }));
   }, [debouncedSearch]);
 
-  const { data, isLoading: isListLoading } = userApi.useList(params);
+  const { data, isLoading: isListLoading } = jobApi.useList(params);
 
   return (
     <>
       <Head>
         <title>Home</title>
       </Head>
+
       <Stack gap="lg">
-        <Title order={2}>Users</Title>
+        <Title order={2}>Jobs</Title>
 
         <Group wrap="nowrap" justify="space-between">
           <Group wrap="nowrap">
@@ -106,7 +81,7 @@ const Home: NextPage = () => {
                 size="md"
                 value={search}
                 onChange={setSearch}
-                placeholder="Search by name or email"
+                placeholder="Search by title"
                 leftSection={<IconSearch size={16} />}
                 rightSection={search ? (
                   <UnstyledButton
@@ -142,22 +117,6 @@ const Home: NextPage = () => {
                     timingFunction: 'ease-out',
                   },
                 }}
-              />
-            </Skeleton>
-
-            <Skeleton
-              className={classes.datePickerSkeleton}
-              height={42}
-              radius="sm"
-              visible={isListLoading}
-              width="auto"
-            >
-              <DatePickerInput
-                type="range"
-                size="md"
-                placeholder="Pick date"
-                value={filterDate}
-                onChange={handleFilter}
               />
             </Skeleton>
           </Group>

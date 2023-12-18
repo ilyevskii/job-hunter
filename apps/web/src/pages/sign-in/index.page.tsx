@@ -40,6 +40,7 @@ const SignIn: NextPage = () => {
       <Head>
         <title>Sign in</title>
       </Head>
+
       <Stack w={408} gap={20}>
         <Stack gap={34}>
           <Title order={1}>Sign In</Title>

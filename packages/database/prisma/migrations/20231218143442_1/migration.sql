@@ -3,10 +3,9 @@ CREATE TYPE "ApplicationStatus" AS ENUM ('PENDING', 'ACCEPTED', 'DECLINED');
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "email" VARCHAR(255) UNIQUE,
-    "username" VARCHAR(255) UNIQUE,
     "passwordHash" VARCHAR(255),
-    "firstName" VARCHAR(100) NOT NULL,
-    "lastName" VARCHAR(100) NOT NULL,
+    "firstName" VARCHAR(100),
+    "lastName" VARCHAR(100),
     "avatarUrl" VARCHAR(255),
     "isEmailVerified" BOOLEAN DEFAULT false,
     "oauthGoogle" BOOLEAN DEFAULT false,
@@ -29,17 +28,19 @@ CREATE TABLE "Industry" (
 CREATE TABLE "Employer" (
     "id" SERIAL NOT NULL,
     "name" VARCHAR(255),
+    "userId" INT,
     "location" VARCHAR(255),
     "numberOfWorkers" INT,
     "averageRating" INT DEFAULT 0,
     "createdOn" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Employer_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Employer_pkey" PRIMARY KEY ("id"),
+    CONSTRAINT "Employer_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE TABLE "Job" (
     "id" SERIAL NOT NULL,
-    "employerId" INT,
+    "employerId" INT NOT NULL,
     "title" VARCHAR(255),
     "description" TEXT,
     "location" VARCHAR(255),
@@ -48,7 +49,7 @@ CREATE TABLE "Job" (
     "createdOn" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Job_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "Job_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "Employer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+    CONSTRAINT "Job_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
 CREATE TABLE "Resume" (
@@ -147,7 +148,6 @@ CREATE TABLE "Admin" (
 );
 
 CREATE UNIQUE INDEX "idx_user_email" ON "User"("email");
-CREATE UNIQUE INDEX "idx_user_username" ON "User"("username");
 CREATE INDEX "idx_user_createdOn" ON "User"("createdOn");
 CREATE INDEX "idx_job_createdOn" ON "Job"("createdOn");
 CREATE INDEX "idx_application_createdOn" ON "Application"("createdOn");

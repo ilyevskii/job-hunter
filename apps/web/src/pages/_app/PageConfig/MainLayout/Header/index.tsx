@@ -1,15 +1,14 @@
 import { memo, FC } from 'react';
-import { AppShellHeader as LayoutHeader, Container } from '@mantine/core';
+import { AppShellHeader as LayoutHeader, Container, Group } from '@mantine/core';
 
 import { accountApi } from 'resources/account';
 
-import { Link } from 'components';
+import { Link, CreateJobButton } from 'components';
 import { RoutePath } from 'routes';
 
 import { LogoImage } from 'public/images';
 
 import UserMenu from './components/UserMenu';
-import ShadowLoginBanner from './components/ShadowLoginBanner';
 
 import classes from './index.module.css';
 
@@ -20,7 +19,6 @@ const Header: FC = () => {
 
   return (
     <LayoutHeader>
-      {account.isShadow && <ShadowLoginBanner email={account.email} />}
       <Container
         className={classes.header}
         mih={72}
@@ -32,7 +30,14 @@ const Header: FC = () => {
         <Link type="router" href={RoutePath.Home}>
           <LogoImage />
         </Link>
-        <UserMenu />
+
+        {account.name ? (
+          <Group gap={50}>
+            <CreateJobButton />
+            <UserMenu />
+          </Group>
+        ) : <UserMenu />}
+
       </Container>
     </LayoutHeader>
   );

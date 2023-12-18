@@ -4,6 +4,7 @@ import get from './actions/get';
 import update from './actions/update';
 import uploadAvatar from './actions/upload-avatar';
 import signUp from './actions/sign-up';
+import employerSignUp from './actions/employer-sign-up';
 import signIn from './actions/sign-in';
 import signOut from './actions/sign-out';
 import verifyEmail from './actions/verify-email';
@@ -14,6 +15,7 @@ import google from './actions/google';
 
 const publicRoutes = routeUtil.getRoutes([
   signUp,
+  employerSignUp,
   signIn,
   signOut,
   verifyEmail,
