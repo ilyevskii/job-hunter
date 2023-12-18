@@ -7,39 +7,101 @@ datasource db {
   url      = env("POSTGRES_URI")
 }
 
-model Admin {
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model User {
   id                 Int      @id @default(autoincrement())
-  userId             Int?
-  canEditJobs        Boolean? @default(false)
-  canDeleteUsers     Boolean? @default(false)
-  canManageEmployers Boolean? @default(false)
-  canEditReviews     Boolean? @default(false)
+  email              String   @unique
+  username           String   @unique
+  passwordHash       String?
+  firstName          String
+  lastName           String
+  avatarUrl          String?
+  signupToken        String?
+  resetPasswordToken String?
+  oauthGoogle        Boolean
+  isEmailVerified    Boolean  @default(false)
+  createdOn          DateTime @default(now())
 }
 
-model Application {
-  id        Int                @id @default(autoincrement())
-  userId    Int?
-  jobId     Int?
-  resumeId  Int?
-  status    ApplicationStatus?
-  createdOn DateTime?          @default(now()) @db.Timestamptz(6)
-}
-
-model Comment {
-  id        Int       @id @default(autoincrement())
-  userId    Int?
-  jobId     Int?
-  text      String?
-  createdOn DateTime? @default(now()) @db.Timestamptz(6)
+model Industry {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
 }
 
 model Employer {
-  id              Int       @id @default(autoincrement())
-  name            String?   @db.VarChar(255)
-  location        String?   @db.VarChar(255)
+  id              Int      @id @default(autoincrement())
+  name            String
+  location        String?
   numberOfWorkers Int?
-  averageRating   Int?      @default(0)
-  createdOn       DateTime? @default(now()) @db.Timestamptz(6)
+  averageRating   Int      @default(0)
+  createdOn       DateTime @default(now())
+}
+
+model Job {
+  id          Int      @id @default(autoincrement())
+  employerId  Int?
+  title       String
+  description String?
+  location    String?
+  salaryFrom  Int?
+  salaryTo    Int?
+  createdOn   DateTime @default(now())
+}
+
+model Resume {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  title     String
+  content   String?
+  createdOn DateTime @default(now())
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  jobId     Int?
+  resumeId  Int?
+  status    String
+  createdOn DateTime @default(now())
+}
+
+model Token {
+  id        Int       @id @default(autoincrement())
+  userId    Int?
+  value     String
+  createdOn DateTime  @default(now())
+  expiresOn DateTime?
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  employerId Int?
+  userId     Int?
+  rating     Int
+  comments   String?
+  createdOn  DateTime @default(now())
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  jobId     Int?
+  text      String
+  createdOn DateTime @default(now())
+}
+
+model Feedback {
+  id            Int      @id @default(autoincrement())
+  employerId    Int?
+  applicationId Int?
+  content       String?
+  createdOn     DateTime @default(now())
 }
 
 model Employer_Industry {
@@ -48,78 +110,11 @@ model Employer_Industry {
   industryId Int?
 }
 
-model Feedback {
-  id            Int       @id @default(autoincrement())
-  employerId    Int?
-  applicationId Int?
-  content       String?
-  createdOn     DateTime? @default(now()) @db.Timestamptz(6)
-}
-
-model Industry {
-  id          Int     @id @default(autoincrement())
-  name        String? @db.VarChar(255)
-  description String?
-}
-
-model Job {
-  id          Int       @id @default(autoincrement())
-  employerId  Int?
-  title       String?   @db.VarChar(255)
-  description String?
-  location    String?   @db.VarChar(255)
-  salaryFrom  Int?
-  salaryTo    Int?
-  createdOn   DateTime? @default(now()) @db.Timestamptz(6)
-}
-
-model Log {
-  id         Int     @id @default(autoincrement())
-  table_name String? @db.VarChar(255)
-  event      String?
-}
-
-model Resume {
-  id        Int       @id @default(autoincrement())
-  userId    Int?
-  title     String?   @db.VarChar(255)
-  content   String?
-  createdOn DateTime? @default(now()) @db.Timestamptz(6)
-}
-
-model Review {
-  id         Int       @id @default(autoincrement())
-  employerId Int?
-  userId     Int?
-  rating     Int?
-  comments   String?
-  createdOn  DateTime? @default(now()) @db.Timestamptz(6)
-}
-
-model Token {
-  id        Int       @id @default(autoincrement())
-  userId    Int?
-  value     String?
-  createdOn DateTime? @default(now()) @db.Timestamptz(6)
-  expiresOn DateTime? @db.Timestamptz(6)
-}
-
-model User {
-  id           Int       @id @default(autoincrement())
-  email        String?   @unique @db.VarChar(255)
-  username     String?   @unique @db.VarChar(255)
-  passwordHash String?   @db.VarChar(255)
-  firstName    String?   @db.VarChar(100)
-  lastName     String?   @db.VarChar(100)
-  createdOn    DateTime? @default(now()) @db.Timestamptz(6)
-}
-
-enum TokenType {
-  ACCESS
-}
-
-enum ApplicationStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
+model Admin {
+  id                 Int     @id @default(autoincrement())
+  userId             Int?
+  canEditJobs        Boolean @default(false)
+  canDeleteUsers     Boolean @default(false)
+  canManageEmployers Boolean @default(false)
+  canEditReviews     Boolean @default(false)
 }

@@ -2,7 +2,11 @@ import Koa, { ParameterizedContext, Request, Next } from 'koa';
 import Router from '@koa/router';
 
 import { Template } from 'mailer';
-import { User } from 'database';
+
+import { User } from 'app-types';
+
+export * from 'app-types';
+export * from 'database';
 
 export type AppKoaContextState = {
   user: User;

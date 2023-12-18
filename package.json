@@ -1,7 +1,7 @@
 {
   "name": "ship",
   "scripts": {
-    "infra": "bash ./bin/start.sh redis",
+    "infra": "bash ./bin/start.sh redis postgres",
     "turbo-start": "turbo run development --filter=\"./apps/*\" --filter=\"./packages/*\" --filter=\"!react-email-client\" ",
     "docker": "bash ./bin/start.sh",
     "start": "bash ./bin/run-all.sh",

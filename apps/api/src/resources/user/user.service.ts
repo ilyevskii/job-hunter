@@ -1,12 +1,11 @@
 import _ from 'lodash';
 
-import db from 'db';
-import { DatabaseService } from 'services';
-
 import { DATABASE_DOCUMENTS } from 'app-constants';
 import { User } from 'types';
 
-const service = new DatabaseService<User>(db, DATABASE_DOCUMENTS.USERS);
+import DatabaseService from 'services/database/database.service';
+
+const service = new DatabaseService<User>(DATABASE_DOCUMENTS.USERS);
 
 const privateFields = [
   'passwordHash',

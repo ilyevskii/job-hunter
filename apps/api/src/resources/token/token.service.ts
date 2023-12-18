@@ -1,28 +1,23 @@
-import db from 'db';
 import { securityUtil } from 'utils';
-import { DatabaseService } from 'services';
 
 import { DATABASE_DOCUMENTS, TOKEN_SECURITY_LENGTH } from 'app-constants';
-import { Token, TokenType } from 'types';
+import { Token } from 'types';
 
-const service = new DatabaseService<Token>(db, DATABASE_DOCUMENTS.TOKENS);
+import DatabaseService from 'services/database/database.service';
 
-const createToken = async (userId: number, type: TokenType, isShadow?: boolean) => {
+const service = new DatabaseService<Token>(DATABASE_DOCUMENTS.TOKENS);
+
+const createToken = async (userId: number) => {
   const value = await securityUtil.generateSecureToken(TOKEN_SECURITY_LENGTH);
 
   return service.insertOne({
-    type,
     value,
     userId,
-    isShadow: isShadow || null,
   });
 };
 
-const createAuthTokens = async ({
-  userId,
-  isShadow,
-}: { userId: number, isShadow?: boolean }) => {
-  const accessTokenEntity = await createToken(userId, TokenType.ACCESS, isShadow);
+const createAuthTokens = async ({ userId }: { userId: number }) => {
+  const accessTokenEntity = await createToken(userId);
 
   return {
     accessToken: accessTokenEntity?.value,
@@ -34,7 +29,6 @@ const findTokenByValue = async (token: string) => {
 
   return tokenEntity && {
     userId: tokenEntity.userId,
-    isShadow: tokenEntity.isShadow,
   };
 };
 

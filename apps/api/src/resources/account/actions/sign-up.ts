@@ -1,16 +1,14 @@
 import { z } from 'zod';
 
-import { AppKoaContext, Next, AppRouter, Template } from 'types';
-import { EMAIL_REGEX, PASSWORD_REGEX } from 'app-constants';
-import { User } from '@prisma/client';
-
 import { userService } from 'resources/user';
 
 import { validateMiddleware } from 'middlewares';
-import { analyticsService, emailService } from 'services';
+import { emailService } from 'services';
 import { securityUtil } from 'utils';
-
 import config from 'config';
+
+import { AppKoaContext, Next, AppRouter, Template, User } from 'types';
+import { EMAIL_REGEX, PASSWORD_REGEX } from 'app-constants';
 
 const schema = z.object({
   firstName: z.string().min(1, 'Please enter First name').max(100),
@@ -26,7 +24,7 @@ interface ValidatedData extends z.infer<typeof schema> {
 async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
   const { email } = ctx.validatedData;
 
-  const isUserExists = await userService.findOne({ email });
+  const isUserExists = await userService.count({ email });
 
   ctx.assertClientError(!isUserExists, {
     email: 'User with this email is already registered',
@@ -55,11 +53,6 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
     passwordHash: hash.toString(),
     isEmailVerified: false,
     signupToken,
-  });
-
-  analyticsService.track('New user created', {
-    firstName,
-    lastName,
   });
 
   await emailService.sendTemplate<Template.VERIFY_EMAIL>({

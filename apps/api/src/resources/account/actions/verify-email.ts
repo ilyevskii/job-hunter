@@ -1,14 +1,12 @@
 import { z } from 'zod';
 
-import { AppKoaContext, Next, AppRouter, Template } from 'types';
-import { User } from '@prisma/client';
-
 import { userService } from 'resources/user';
 
 import { validateMiddleware } from 'middlewares';
 import { authService, emailService } from 'services';
-
 import config from 'config';
+
+import { AppKoaContext, Next, AppRouter, Template, User } from 'types';
 
 const schema = z.object({
   token: z.string().min(1, 'Token is required'),
@@ -24,6 +22,7 @@ async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
   ctx.assertClientError(user, { token: 'Token is invalid' }, 404);
 
   ctx.validatedData.user = user;
+
   await next();
 }
 
@@ -37,7 +36,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
       signupToken: null,
     },
   );
-
+  
   await authService.setTokens(ctx, user.id);
 
   await emailService.sendTemplate<Template.SIGN_UP_WELCOME>({

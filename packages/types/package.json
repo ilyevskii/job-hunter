@@ -8,15 +8,9 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "@koa/router": "*",
-    "mailer": "workspace:*",
-    "database": "workspace:*",
-    "koa": "*",
-    "zod": "*"
+    "database": "workspace:*"
   },
   "devDependencies": {
-    "@types/koa": "*",
-    "@types/koa__router": "*",
     "eslint": "*",
     "lint-staged": "*",
     "typescript": "*"
