@@ -31,7 +31,9 @@ const signInGoogleWithCode = async (ctx: AppKoaContext) => {
 
   ctx.assertError(isValid, `Exchange code for token error: ${payload}`);
 
-  const user = await userService.findOne({ email: payload.email });
+  const user = await userService.findOne({
+    where: { email: payload.email },
+  });
   let userChanged;
 
   if (user) {

@@ -52,11 +52,18 @@ class DatabaseService<T extends object> {
 
   public async findAll({
     where,
+    join,
     page = 1,
     perPage = 10,
     search,
+    sort,
   } : {
     where: Partial<T>,
+    join?: {
+      table: string,
+      field: string,
+      resultField: string,
+    },
     page?: number,
     perPage?: number,
     search?: {
@@ -69,14 +76,14 @@ class DatabaseService<T extends object> {
     }
   }): Promise<T[] | null> {
     let conditions = Object.entries(where)
-      .map(([key], index) => `"${key}" = $${index + 1}`)
+      .map(([key], index) => `"${this.tableName}"."${key}" = $${index + 1}`)
       .join(' AND ');
 
     const values = Object.values(where);
 
     if (search) {
       const searchCondition = search.columns
-        .map(column => `"${column}" ILIKE $${values.length + 1}`)
+        .map(column => `"${this.tableName}"."${column}" ILIKE $${values.length + 1}`)
         .join(' OR ');
 
       if (conditions) {
@@ -88,11 +95,29 @@ class DatabaseService<T extends object> {
       values.push(`%${search.value}%`);
     }
 
+    const selectClause = join
+      ? `"${this.tableName}".*, (SELECT jsonb_agg("${join.table}".*) FROM "${join.table}" WHERE "${this.tableName}"."${join.field}" = "${join.table}"."id" LIMIT 1) -> 0 AS "${join.resultField}"`
+      : `"${this.tableName}".*`;
+
+
+    const joinClause = join
+      ? `LEFT JOIN "${join.table}" ON "${this.tableName}"."${join.field}" = "${join.table}"."id"`
+      : '';
+
+    const orderByClause = sort
+      ? `ORDER BY "${sort.column}" ${sort.direction}`
+      : '';
+
+    const groupByClause = join ? `GROUP BY "${this.tableName}".id` : '';
+
     const offset = (page - 1) * perPage;
 
     const query = `
-    SELECT * FROM "${this.tableName}"
+    SELECT ${selectClause} FROM "${this.tableName}"
+    ${joinClause}
     ${conditions ? 'WHERE ' + conditions : ''}
+    ${groupByClause}
+    ${orderByClause}
     LIMIT $${values.length + 1}
     OFFSET $${values.length + 2};
     `;
@@ -100,13 +125,34 @@ class DatabaseService<T extends object> {
     return this.prisma.$queryRawUnsafe(query, ...values, perPage, offset);
   }
 
-  public async findOne(where: Partial<T>): Promise<T | null> {
+
+  public async findOne({
+    where,
+    join,
+  }: {
+    where: Partial<T>,
+    join?: {
+      table: string,
+      field: string,
+      resultField: string,
+    }
+  }): Promise<T | null> {
     const conditions = Object.entries(where)
-      .map(([key], index) => `"${key}" = $${index + 1}`)
+      .map(([key], index) => `"${this.tableName}"."${key}" = $${index + 1}`)
       .join(' AND ');
     const values = Object.values(where);
 
-    const query = `SELECT * FROM "${this.tableName}" WHERE ${conditions} LIMIT 1;`;
+    const selectClause = join
+      ? `"${this.tableName}".*, (SELECT jsonb_agg("${join.table}".*) FROM "${join.table}" WHERE "${this.tableName}"."${join.field}" = "${join.table}"."id" LIMIT 1) -> 0 AS "${join.resultField}"`
+      : `"${this.tableName}".*`;
+
+    const joinClause = join
+      ? `LEFT JOIN "${join.table}" ON "${this.tableName}"."${join.field}" = "${join.table}"."id"`
+      : '';
+
+    const groupByClause = join ? `GROUP BY "${this.tableName}".id` : '';
+
+    const query = `SELECT ${selectClause} FROM "${this.tableName}" ${joinClause} WHERE ${conditions} ${groupByClause} LIMIT 1;`;
 
     const result = (await this.prisma.$queryRawUnsafe(query, ...values)) as T[] | undefined;
 
@@ -114,6 +160,7 @@ class DatabaseService<T extends object> {
 
     return result[0];
   }
+
 
   public async count(where: Partial<T>): Promise<number> {
     const conditions = Object.entries(where)

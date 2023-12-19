@@ -1,6 +1,7 @@
 import { jobService } from 'resources/job';
 
 import { AppKoaContext, AppRouter, Next, Job } from 'types';
+import { DATABASE_DOCUMENTS } from 'app-constants';
 
 type Request = {
   params: {
@@ -16,7 +17,14 @@ async function validator(ctx: AppKoaContext<ValidatedData, Request>, next: Next)
 
   ctx.assertError(!Number.isNaN(+id), 'Incorrect job id');
 
-  const job = await jobService.findOne({ id: +id });
+  const job = await jobService.findOne({
+    where: { id: +id },
+    join: {
+      table: DATABASE_DOCUMENTS.EMPLOYERS,
+      field: 'employerId',
+      resultField: 'employer',
+    },
+  });
 
   ctx.assertError(job, 'Job not found');
 

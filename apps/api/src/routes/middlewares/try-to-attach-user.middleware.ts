@@ -12,11 +12,12 @@ const tryToAttachUser = async (ctx: AppKoaContext, next: Next) => {
   }
 
   if (userData && userData.userId) {
-    const user = await userService.findOne({ id: userData.userId });
+    const user = await userService.findOne({
+      where: { id: userData.userId },
+    });
 
     if (user) {
       ctx.state.user = user;
-      ctx.state.isShadow = userData.isShadow || false;
     }
   }
 

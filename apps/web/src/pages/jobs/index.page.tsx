@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useInputState } from '@mantine/hooks';
 import { IconSearch, IconX, IconSelector } from '@tabler/icons-react';
-import { RowSelectionState, SortingState } from '@tanstack/react-table';
+import { SortingState } from '@tanstack/react-table';
 
 import { jobApi } from 'resources/job';
 
@@ -36,7 +36,6 @@ interface UsersListParams {
 
 const Home: NextPage = () => {
   const [search, setSearch] = useInputState('');
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [sortBy, setSortBy] = useState(selectOptions[0].value);
 
@@ -140,8 +139,6 @@ const Home: NextPage = () => {
             columns={columns}
             data={data.items}
             dataCount={data.count}
-            rowSelection={rowSelection}
-            setRowSelection={setRowSelection}
             sorting={sorting}
             onSortingChange={setSorting}
             onPageChange={setParams}

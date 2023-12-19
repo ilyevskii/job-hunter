@@ -22,3 +22,9 @@ export function useCreate<T>() {
 
   return useMutation<Job, unknown, T>(create);
 }
+
+export function useGet(id: number, options?: any) {
+  const getJobById = () => apiService.get(`/jobs/${id}`);
+
+  return useQuery<Job, unknown, JobWithEmployer, string[]>(['jobs', String(id)], getJobById, options);
+}

@@ -25,7 +25,9 @@ const createAuthTokens = async ({ userId }: { userId: number }) => {
 };
 
 const findTokenByValue = async (token: string) => {
-  const tokenEntity = await service.findOne({ value: token });
+  const tokenEntity = await service.findOne({
+    where: { value: token },
+  });
 
   return tokenEntity && {
     userId: tokenEntity.userId,

@@ -21,7 +21,9 @@ interface ValidatedData extends z.infer<typeof schema> {
 async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
   const { token } = ctx.validatedData;
 
-  const user = await userService.findOne({ resetPasswordToken: token });
+  const user = await userService.findOne({
+    where: { resetPasswordToken: token },
+  });
 
   if (!user) return ctx.body = {};
 

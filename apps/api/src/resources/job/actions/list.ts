@@ -7,6 +7,7 @@ import { validateMiddleware } from 'middlewares';
 
 import { AppKoaContext, AppRouter, Next } from 'types';
 import { employerService } from '../../employer';
+import { DATABASE_DOCUMENTS } from 'app-constants';
 
 const schema = z.object({
   page: z.string().transform(Number).default('1'),
@@ -40,19 +41,19 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
         value: searchValue,
       },
     } : {}),
+    join: {
+      table: DATABASE_DOCUMENTS.EMPLOYERS,
+      field: 'employerId',
+      resultField: 'employer',
+    },
     perPage,
     page,
   });
 
   const totalCount = await jobService.count({ employerId });
 
-  const modifiedJobs = await Promise.all((jobs ?? []).map(async (j) => ({
-    ...j,
-    employer: await employerService.findOne({ id: j.employerId }),
-  })));
-
   ctx.body = {
-    items: modifiedJobs,
+    items: jobs,
     totalPages: Math.ceil(totalCount / perPage),
     count: totalCount,
     page,

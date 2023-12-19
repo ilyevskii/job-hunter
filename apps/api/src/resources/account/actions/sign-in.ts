@@ -22,7 +22,9 @@ interface ValidatedData extends z.infer<typeof schema> {
 async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
   const { email, password } = ctx.validatedData;
 
-  const user = await userService.findOne({ email });
+  const user = await userService.findOne({
+    where: { email },
+  });
 
   ctx.assertClientError(user && user.passwordHash, {
     credentials: 'The email or password you have entered is invalid',

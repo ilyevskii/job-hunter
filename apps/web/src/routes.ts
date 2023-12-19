@@ -12,6 +12,8 @@ export enum RoutePath {
   // Private paths
   Home = '/',
   Profile = '/profile',
+  Jobs = '/jobs',
+  JobsDetails = '/jobs/[id]',
 
   // Auth paths
   SignIn = '/sign-in',
@@ -34,6 +36,14 @@ type RoutesConfiguration = {
 export const routesConfiguration: RoutesConfiguration = {
   // Private routes
   [RoutePath.Home]: {
+    scope: ScopeType.PRIVATE,
+    layout: LayoutType.MAIN,
+  },
+  [RoutePath.Jobs]: {
+    scope: ScopeType.PRIVATE,
+    layout: LayoutType.MAIN,
+  },
+  [RoutePath.JobsDetails]: {
     scope: ScopeType.PRIVATE,
     layout: LayoutType.MAIN,
   },
