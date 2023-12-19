@@ -65,7 +65,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
       subject: 'Please Confirm Your Email Address for Ship',
       template: Template.VERIFY_EMAIL,
       params: {
-        firstName: user.firstName,
+        firstName: name,
         href: `${config.API_URL}/account/verify-email?token=${signupToken}`,
       },
     }),

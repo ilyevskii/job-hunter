@@ -3,6 +3,9 @@ export const DATABASE_DOCUMENTS = {
   TOKENS: 'Token',
   JOBS: 'Job',
   EMPLOYERS: 'Employer',
+  APPLICATIONS: 'Application',
+  RESUMES: 'Resume',
+  FEEDBACKS: 'Feedback',
 };
 
 export const COOKIES = {

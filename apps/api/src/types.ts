@@ -3,13 +3,13 @@ import Router from '@koa/router';
 
 import { Template } from 'mailer';
 
-import { User } from 'app-types';
+import { UserWithEmployer } from 'app-types';
 
 export * from 'app-types';
 export * from 'database';
 
 export type AppKoaContextState = {
-  user: User;
+  user: UserWithEmployer;
   accessToken: string;
   isShadow: boolean | null;
 };

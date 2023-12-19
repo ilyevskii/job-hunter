@@ -13,7 +13,7 @@ const MenuToggle = forwardRef<HTMLButtonElement>((props, ref) => {
   return (
     <UnstyledButton ref={ref} {...props}>
       <Avatar color={primaryColor} radius="xl">
-        {(account.firstName ?? account.name).charAt(0)}
+        {(account.firstName ?? account.employer?.name ?? '').charAt(0)}
         {(account.lastName ?? '').charAt(0)}
       </Avatar>
     </UnstyledButton>

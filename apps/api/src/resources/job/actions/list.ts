@@ -6,7 +6,6 @@ import { jobService } from 'resources/job';
 import { validateMiddleware } from 'middlewares';
 
 import { AppKoaContext, AppRouter, Next } from 'types';
-import { employerService } from '../../employer';
 import { DATABASE_DOCUMENTS } from 'app-constants';
 
 const schema = z.object({
@@ -14,6 +13,9 @@ const schema = z.object({
   perPage: z.string().transform(Number).default('10'),
   searchValue: z.string().optional(),
   employerId: z.string().transform(Number).optional(),
+  sort: z.object({
+    createdOn: z.enum(['ASC', 'DESC']),
+  }).optional(),
 });
 
 type ValidatedData = z.infer<typeof schema>;
@@ -29,7 +31,7 @@ async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
 }
 
 async function handler(ctx: AppKoaContext<ValidatedData>) {
-  const { perPage, page, searchValue, employerId } = ctx.validatedData;
+  const { perPage, page, searchValue, employerId, sort } = ctx.validatedData;
 
   const jobs = await jobService.findAll({
     where: (employerId ? {
@@ -41,6 +43,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
         value: searchValue,
       },
     } : {}),
+    ...(sort ? { sort } : {}),
     join: {
       table: DATABASE_DOCUMENTS.EMPLOYERS,
       field: 'employerId',

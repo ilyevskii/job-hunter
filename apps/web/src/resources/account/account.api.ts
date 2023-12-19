@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from 'react-query';
 
-import { User, Employer } from 'types';
-
 import { apiService } from 'services';
-
 import queryClient from 'query-client';
+
+import { User, UserWithEmployer } from 'types';
 
 export function useSignIn<T>() {
   const signIn = (data: T) => apiService.post('/account/sign-in', data);
@@ -67,13 +66,19 @@ export function useResendEmail<T>() {
 export function useGet(options? : {}) {
   const get = () => apiService.get('/account');
 
-  return useQuery<User & Partial<Employer>>(['account'], get, options);
+  return useQuery<UserWithEmployer>(['account'], get, options);
 }
 
 export function useUpdate<T>() {
   const update = (data: T) => apiService.put('/account', data);
 
   return useMutation<User, unknown, T>(update);
+}
+
+export function useEmployerUpdate<T>() {
+  const update = (data: T) => apiService.put('/account/employer', data);
+
+  return useMutation<UserWithEmployer, unknown, T>(update);
 }
 
 export function useUploadAvatar<T>() {

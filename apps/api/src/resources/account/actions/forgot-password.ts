@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
-import { AppKoaContext, Next, AppRouter, Template } from 'types';
+import { AppKoaContext, Next, AppRouter, Template, UserWithEmployer } from 'types';
 import { EMAIL_REGEX } from 'app-constants';
-import { User } from '@prisma/client';
 
 import { userService } from 'resources/user';
 
@@ -17,11 +16,11 @@ const schema = z.object({
 });
 
 interface ValidatedData extends z.infer<typeof schema> {
-  user: User;
+  user: UserWithEmployer;
 }
 
 async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
-  const user = await userService.findOne({
+  const user = await userService.getWithEmployer({
     where: { email: ctx.validatedData.email },
   });
 
@@ -44,14 +43,15 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
     });
   }
 
-  const resetPasswordUrl = `${config.API_URL}/account/verify-reset-token?token=${resetPasswordToken}&email=${encodeURIComponent(user.email)}`;
+  const resetPasswordUrl =
+      `${config.API_URL}/account/verify-reset-token?token=${resetPasswordToken}&email=${encodeURIComponent(user.email)}`;
 
   await emailService.sendTemplate<Template.RESET_PASSWORD>({
     to: user.email,
     subject: 'Password Reset Request for Ship',
     template: Template.RESET_PASSWORD,
     params: {
-      firstName: user.firstName,
+      firstName: user.firstName ?? user.employer?.name ?? '',
       href: resetPasswordUrl,
     },
   });

@@ -2,21 +2,27 @@ import { FC } from 'react';
 import { Loader, Stack, Title, Text, Group } from '@mantine/core';
 
 import { jobApi } from 'resources/job';
+import { accountApi } from 'resources/account';
+
+import JobApplications from '../JobApplications';
 
 interface JobCardProps {
   id: number;
 }
 
 const JobCard: FC<JobCardProps> = ({ id }) => {
-  const { data, isLoading } = jobApi.useGet(id);
+  const { data: job, isLoading: isJobLoading } = jobApi.useGet(id);
+  const { data: account } = accountApi.useGet();
 
-  if (isLoading) return <Loader size={40} />;
+  if (isJobLoading) return <Loader size={40} />;
+
+  if (!account) return null;
 
   return (
-    data ? (
+    job ? (
       <Stack gap={48}>
         <Title order={1}>
-          {data.title}
+          {job.title}
         </Title>
 
         <Group justify="space-between" align="flex-start">
@@ -26,7 +32,7 @@ const JobCard: FC<JobCardProps> = ({ id }) => {
             </Text>
 
             <Text c="gray.8">
-              {data.description}
+              {job.description}
             </Text>
           </Stack>
 
@@ -36,11 +42,11 @@ const JobCard: FC<JobCardProps> = ({ id }) => {
             </Text>
 
             <Text c="gray.8">
-              {data.salaryFrom}
+              {job.salaryFrom}
               {' '}
               -
               {' '}
-              {data.salaryTo}
+              {job.salaryTo}
               {' '}
               $
             </Text>
@@ -52,7 +58,7 @@ const JobCard: FC<JobCardProps> = ({ id }) => {
             </Text>
 
             <Text c="gray.8">
-              {data.location}
+              {job.location}
             </Text>
           </Stack>
         </Group>
@@ -65,20 +71,22 @@ const JobCard: FC<JobCardProps> = ({ id }) => {
           <Stack gap={8} miw={300} w="fit-content">
             <Group justify="space-between">
               <Text>Name:</Text>
-              <Text>{data.employer.name}</Text>
+              <Text>{job.employer.name}</Text>
             </Group>
 
             <Group justify="space-between">
               <Text>Number of workers:</Text>
-              <Text>{data.employer.numberOfWorkers}</Text>
+              <Text>{job.employer.numberOfWorkers}</Text>
             </Group>
 
             <Group justify="space-between">
               <Text>Average rating:</Text>
-              <Text>{data.employer.averageRating}</Text>
+              <Text>{job.employer.averageRating}</Text>
             </Group>
           </Stack>
         </Stack>
+
+        <JobApplications jobId={job.id} userId={account.id} />
       </Stack>
     ) : (
       <Text>

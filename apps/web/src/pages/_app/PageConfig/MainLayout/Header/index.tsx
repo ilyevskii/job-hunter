@@ -31,7 +31,7 @@ const Header: FC = () => {
           <LogoImage />
         </Link>
 
-        {account.name ? (
+        {account.employer?.name ? (
           <Group gap={50}>
             <CreateJobButton />
             <UserMenu />

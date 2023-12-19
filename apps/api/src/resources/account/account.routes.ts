@@ -2,6 +2,7 @@ import { routeUtil } from 'utils';
 
 import get from './actions/get';
 import update from './actions/update';
+import employerUpdate from './actions/employer-update';
 import uploadAvatar from './actions/upload-avatar';
 import signUp from './actions/sign-up';
 import employerSignUp from './actions/employer-sign-up';
@@ -28,6 +29,7 @@ const publicRoutes = routeUtil.getRoutes([
 const privateRoutes = routeUtil.getRoutes([
   get,
   update,
+  employerUpdate,
   uploadAvatar,
 ]);
 

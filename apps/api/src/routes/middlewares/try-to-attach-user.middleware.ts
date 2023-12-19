@@ -1,7 +1,7 @@
-import { AppKoaContext, Next } from 'types';
-
 import { userService } from 'resources/user';
 import { tokenService } from 'resources/token';
+
+import { AppKoaContext, Next } from 'types';
 
 const tryToAttachUser = async (ctx: AppKoaContext, next: Next) => {
   const accessToken = ctx.state.accessToken;
@@ -12,7 +12,7 @@ const tryToAttachUser = async (ctx: AppKoaContext, next: Next) => {
   }
 
   if (userData && userData.userId) {
-    const user = await userService.findOne({
+    const user = await userService.getWithEmployer({
       where: { id: userData.userId },
     });
 

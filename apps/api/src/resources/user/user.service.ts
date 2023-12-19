@@ -1,9 +1,11 @@
 import _ from 'lodash';
 
 import { DATABASE_DOCUMENTS } from 'app-constants';
-import { User } from 'types';
+import { User, UserWithEmployer } from 'types';
 
 import DatabaseService from 'services/database/database.service';
+import { userService } from './index';
+import { employerService } from '../employer';
 
 const service = new DatabaseService<User>(DATABASE_DOCUMENTS.USERS);
 
@@ -15,6 +17,27 @@ const privateFields = [
 
 const getPublic = (user: User | null) => _.omit(user, privateFields);
 
+const getWithEmployer = async ({ where }: { where: Partial<User> }): Promise<UserWithEmployer | null> => {
+  const user = await userService.findOne({ where });
+
+  if (user) {
+
+    const employerData = await employerService.findOne({
+      where: { userId: user.id },
+    });
+
+    return {
+      ...user,
+      ...(employerData ? {
+        employer: employerData,
+      } : {}),
+    };
+  }
+
+  return null;
+};
+
 export default Object.assign(service, {
   getPublic,
+  getWithEmployer,
 });

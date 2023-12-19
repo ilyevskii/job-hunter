@@ -1,7 +1,8 @@
+import _ from 'lodash';
+
 import db from 'db';
 
 import { PrismaClient } from 'database';
-import { number } from 'zod';
 
 class DatabaseService<T extends object> {
   private prisma: PrismaClient;
@@ -26,10 +27,16 @@ class DatabaseService<T extends object> {
   }
 
   public async updateOne(where: Partial<T>, data: Partial<T>): Promise<T | null> {
-    const updateFields = Object.keys(data)
+    const modifiedData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
+
+    if (_.isEmpty(modifiedData)) {
+      return null;
+    }
+
+    const updateFields = Object.keys(modifiedData)
       .map((key, index) => `"${key}" = $${index + 1}`)
       .join(', ');
-    const updateValues = Object.values(data);
+    const updateValues = Object.values(modifiedData);
 
     const conditionFields = Object.entries(where)
       .map(([key], index) => `"${key}" = $${updateValues.length + index + 1}`)
@@ -57,7 +64,7 @@ class DatabaseService<T extends object> {
     perPage = 10,
     search,
     sort,
-  } : {
+  }: {
     where: Partial<T>,
     join?: {
       table: string,
@@ -70,10 +77,7 @@ class DatabaseService<T extends object> {
       columns: string[],
       value: string,
     },
-    sort?: {
-      column: string,
-      direction: 'ASC' | 'DESC',
-    }
+    sort?: Record<string, 'ASC' | 'DESC'>;
   }): Promise<T[] | null> {
     let conditions = Object.entries(where)
       .map(([key], index) => `"${this.tableName}"."${key}" = $${index + 1}`)
@@ -96,19 +100,16 @@ class DatabaseService<T extends object> {
     }
 
     const selectClause = join
-      ? `"${this.tableName}".*, (SELECT jsonb_agg("${join.table}".*) FROM "${join.table}" WHERE "${this.tableName}"."${join.field}" = "${join.table}"."id" LIMIT 1) -> 0 AS "${join.resultField}"`
+      ? `"${this.tableName}".*, to_jsonb("${join.table}") AS "${join.resultField}"`
       : `"${this.tableName}".*`;
-
 
     const joinClause = join
       ? `LEFT JOIN "${join.table}" ON "${this.tableName}"."${join.field}" = "${join.table}"."id"`
       : '';
 
     const orderByClause = sort
-      ? `ORDER BY "${sort.column}" ${sort.direction}`
+      ? `ORDER BY "${Object.keys(sort)[0]}" ${Object.values(sort)[0]}`
       : '';
-
-    const groupByClause = join ? `GROUP BY "${this.tableName}".id` : '';
 
     const offset = (page - 1) * perPage;
 
@@ -116,7 +117,6 @@ class DatabaseService<T extends object> {
     SELECT ${selectClause} FROM "${this.tableName}"
     ${joinClause}
     ${conditions ? 'WHERE ' + conditions : ''}
-    ${groupByClause}
     ${orderByClause}
     LIMIT $${values.length + 1}
     OFFSET $${values.length + 2};
@@ -124,6 +124,7 @@ class DatabaseService<T extends object> {
 
     return this.prisma.$queryRawUnsafe(query, ...values, perPage, offset);
   }
+
 
 
   public async findOne({
@@ -142,25 +143,20 @@ class DatabaseService<T extends object> {
       .join(' AND ');
     const values = Object.values(where);
 
-    const selectClause = join
-      ? `"${this.tableName}".*, (SELECT jsonb_agg("${join.table}".*) FROM "${join.table}" WHERE "${this.tableName}"."${join.field}" = "${join.table}"."id" LIMIT 1) -> 0 AS "${join.resultField}"`
-      : `"${this.tableName}".*`;
+    let joinClause = '';
+    let selectClause = `"${this.tableName}".*`;
+    if (join) {
+      joinClause = `LEFT JOIN "${join.table}" ON "${this.tableName}"."${join.field}" = "${join.table}"."id"`;
+      selectClause += `, to_jsonb("${join.table}") AS "${join.resultField}"`;
+    }
 
-    const joinClause = join
-      ? `LEFT JOIN "${join.table}" ON "${this.tableName}"."${join.field}" = "${join.table}"."id"`
-      : '';
-
-    const groupByClause = join ? `GROUP BY "${this.tableName}".id` : '';
-
-    const query = `SELECT ${selectClause} FROM "${this.tableName}" ${joinClause} WHERE ${conditions} ${groupByClause} LIMIT 1;`;
+    const query = `SELECT ${selectClause} FROM "${this.tableName}" ${joinClause} WHERE ${conditions} LIMIT 1;`;
 
     const result = (await this.prisma.$queryRawUnsafe(query, ...values)) as T[] | undefined;
 
-    if (!result) return null;
-
+    if (!result || result.length === 0) return null;
     return result[0];
   }
-
 
   public async count(where: Partial<T>): Promise<number> {
     const conditions = Object.entries(where)

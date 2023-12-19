@@ -1,16 +1,26 @@
 import { useRouter } from 'next/router';
 
-import { JobCard } from 'components';
+import { accountApi } from 'resources/account';
+
+import { JobCard, ViewFeedbackButton } from 'components';
 
 const PublicJobDetails = () => {
   const router = useRouter();
 
   const { id } = router.query;
 
-  if (!id || Array.isArray(id) || Number.isNaN(+id)) return null;
+  const { data: account } = accountApi.useGet();
+
+  if (!id || Array.isArray(id) || Number.isNaN(+id) || !account) return null;
 
   return (
-    <JobCard id={+id} />
+    <>
+      <JobCard id={+id} />
+
+      {!account.employer && (
+        <ViewFeedbackButton jobId={+id} />
+      )}
+    </>
   );
 };
 

@@ -18,12 +18,13 @@ const App: FC<AppProps> = ({ Component, pageProps }) => (
     <Head>
       <title>Ship</title>
     </Head>
+
     <QueryClientProvider client={queryClient}>
       <MantineProvider
         theme={mainTheme}
       >
         <ModalsProvider>
-          <Notifications autoClose={10000} />
+          <Notifications position="top-right" autoClose={5000} />
 
           <PageConfig>
             <Component {...pageProps} />

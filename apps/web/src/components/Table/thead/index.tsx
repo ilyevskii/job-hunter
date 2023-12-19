@@ -50,7 +50,7 @@ const Thead: FC<TheadProps> = ({ isSortable, headerGroups, flexRender }) => (
                     header.getContext(),
                   )
                 }
-                {isSortable && header.id !== 'select' && ({
+                {isSortable && header.id !== 'select' && header.column.columnDef.enableSorting && ({
                   false: <IconArrowsSort size={16} />,
                   asc: <IconSortAscending size={16} />,
                   desc: <IconSortDescending size={16} />,
