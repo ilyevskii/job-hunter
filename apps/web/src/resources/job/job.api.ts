@@ -23,6 +23,18 @@ export function useCreate<T>() {
   return useMutation<Job, unknown, T>(create);
 }
 
+export function useUpdate<T>(id: number) {
+  const update = (data: T) => apiService.put(`/jobs/${id}`, data);
+
+  return useMutation<Job, unknown, T>(update);
+}
+
+export function useDelete<T>(id: number) {
+  const deleteJob = (data: T) => apiService.delete(`/jobs/${id}`, data);
+
+  return useMutation<Job, unknown, T>(deleteJob);
+}
+
 export function useGet(id: number, options?: any) {
   const getJobById = () => apiService.get(`/jobs/${id}`);
 

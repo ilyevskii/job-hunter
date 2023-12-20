@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Button, ButtonProps } from '@mantine/core';
 
-import ApplyJobModal from '../ApplyJobModal';
+import ApplyJobModal from './ApplyJobModal';
 
 interface ApplyJobButtonProps extends ButtonProps {
   jobId: number;

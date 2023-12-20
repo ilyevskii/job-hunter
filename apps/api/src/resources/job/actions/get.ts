@@ -1,6 +1,7 @@
 import { jobService } from 'resources/job';
+import { employerIndustryService } from 'resources/employerIndustry';
 
-import { AppKoaContext, AppRouter, Next, Job } from 'types';
+import { AppKoaContext, AppRouter, Next } from 'types';
 import { DATABASE_DOCUMENTS } from 'app-constants';
 
 type Request = {
@@ -9,7 +10,7 @@ type Request = {
   };
 };
 type ValidatedData = {
-  job: Job,
+  job: any,
 };
 
 async function validator(ctx: AppKoaContext<ValidatedData, Request>, next: Next) {
@@ -34,7 +35,25 @@ async function validator(ctx: AppKoaContext<ValidatedData, Request>, next: Next)
 }
 
 async function handler(ctx: AppKoaContext<ValidatedData, Request>) {
-  ctx.body = ctx.validatedData.job;
+  const { job } = ctx.validatedData;
+
+  let employerIndustries: any[] = [];
+
+  if (job.employer) {
+    employerIndustries = (await employerIndustryService.findAll({
+      where: { employerId: job.employer.id },
+      join: {
+        table: DATABASE_DOCUMENTS.INDUSTRIES,
+        field: 'industryId',
+        resultField: 'industry',
+      },
+    })) ?? [];
+
+    ctx.body = {
+      ...job,
+      industries: employerIndustries.map(v => v.industry),
+    };
+  }
 }
 
 export default (router: AppRouter) => {

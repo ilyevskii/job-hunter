@@ -79,6 +79,8 @@ const CreateFeedbackButton: FC<CreateFeedbackButtonProps> = ({ applicationId }) 
             <Textarea
               {...register('content')}
               label="Content"
+              styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+              size="md"
               maxLength={10000}
               placeholder="Content"
               error={errors.content?.message}

@@ -101,18 +101,6 @@ CREATE TABLE "Review" (
     CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE "Comment" (
-    "id" SERIAL NOT NULL,
-    "userId" INT,
-    "jobId" INT,
-    "text" TEXT,
-    "createdOn" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Comment_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT "Comment_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Job"("id") ON DELETE CASCADE
-);
-
 CREATE TABLE "Feedback" (
     "id" SERIAL NOT NULL,
     "employerId" INT,
@@ -135,21 +123,15 @@ CREATE TABLE "Employer_Industry" (
     CONSTRAINT "Employer_Industry_industryId_fkey" FOREIGN KEY ("industryId") REFERENCES "Industry"("id") ON DELETE CASCADE
 );
 
-CREATE TABLE "Admin" (
-    "id" SERIAL NOT NULL,
-    "userId" INT,
-    "canEditJobs" BOOLEAN DEFAULT false,
-    "canDeleteUsers" BOOLEAN DEFAULT false,
-    "canManageEmployers" BOOLEAN DEFAULT false,
-    "canEditReviews" BOOLEAN DEFAULT false,
-
-    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
 CREATE UNIQUE INDEX "idx_user_email" ON "User"("email");
 CREATE INDEX "idx_user_createdOn" ON "User"("createdOn");
 CREATE INDEX "idx_job_createdOn" ON "Job"("createdOn");
 CREATE INDEX "idx_application_createdOn" ON "Application"("createdOn");
 CREATE INDEX "idx_review_createdOn" ON "Review"("createdOn");
-CREATE INDEX "idx_comment_createdOn" ON "Comment"("createdOn");
+
+INSERT INTO "Industry" ("name", "description") VALUES
+('Information Technology', 'Includes companies involved in software development, hardware manufacturing, and digital services.'),
+('Healthcare', 'Comprises hospitals, medical devices, clinical trials, outsourcing, telemedicine, and medical equipment.'),
+('Finance', 'Encompasses banking, investment funds, insurance companies, and real estate.'),
+('Manufacturing', 'Involves the production of goods in factories, including machinery, electronics, consumer goods, and automotive.'),
+('Retail', 'Covers a broad range of businesses that sell goods and services directly to consumers.');

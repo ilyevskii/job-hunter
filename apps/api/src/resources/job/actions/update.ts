@@ -5,7 +5,13 @@ import { jobService } from 'resources/job';
 
 import { validateMiddleware } from 'middlewares';
 
-import { AppKoaContext, AppRouter } from 'types';
+import { AppKoaContext, Next, AppRouter } from 'types';
+
+type Request = {
+  params: {
+    id: string;
+  };
+};
 
 const schema = z.object({
   title: z.string().min(1, 'Please enter job title').max(255),
@@ -23,15 +29,31 @@ const schema = z.object({
     path: ['salaryFrom'],
   });
 
-type ValidatedData = z.infer<typeof schema>;
+interface ValidatedData extends z.infer<typeof schema> {
+  passwordHash?: string | null;
+}
 
-async function handler(ctx: AppKoaContext<ValidatedData>) {
-  ctx.body = await jobService.insertOne({
-    employerId: ctx.state.user.employer?.id,
-    ..._.pickBy(ctx.validatedData),
-  });
+async function validator(ctx: AppKoaContext<ValidatedData, Request>, next: Next) {
+  const { id } = ctx.request.params;
+
+  ctx.assertError(!Number.isNaN(+id), 'Incorrect job id');
+
+  const isJobExists = await jobService.count({ id: +id });
+
+  console.log('isJobExists ', isJobExists);
+
+  ctx.assertError(isJobExists, 'Job not found');
+
+  await next();
+}
+
+async function handler(ctx: AppKoaContext<ValidatedData, Request>) {
+  ctx.body = await jobService.updateOne(
+    { id: +ctx.request.params.id },
+    _.pickBy(ctx.validatedData),
+  );
 }
 
 export default (router: AppRouter) => {
-  router.post('/', validateMiddleware(schema), handler);
+  router.put('/:id', validateMiddleware(schema), validator, handler);
 };

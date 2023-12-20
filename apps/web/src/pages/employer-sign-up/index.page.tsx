@@ -14,10 +14,11 @@ import {
   Text,
   Checkbox,
   SimpleGrid,
-  Tooltip, NumberInput,
+  Tooltip, NumberInput, MultiSelect,
 } from '@mantine/core';
 
 import { accountApi } from 'resources/account';
+import { industryApi } from 'resources/industry';
 
 import config from 'config';
 import { Link } from 'components';
@@ -30,6 +31,7 @@ const schema = z.object({
   name: z.string().min(1, 'Please enter name').max(100),
   location: z.string().min(1, 'Please enter location').max(100),
   numberOfWorkers: z.string().transform(Number),
+  industries: z.array(z.string()).nonempty(),
   email: z.string().regex(EMAIL_REGEX, 'Email format is incorrect.'),
   password: z.string().regex(
     PASSWORD_REGEX,
@@ -90,19 +92,17 @@ const SignUp: NextPage = () => {
     isLoading: isSignUpLoading,
   } = accountApi.useEmployerSignUp<SignUpParams>();
 
-  const onSubmit = (data: SignUpParams) => {
-    console.log('a');
+  const { data: industries } = industryApi.useList();
 
-    signUp(data, {
-      onSuccess: (response: any) => {
-        if (response.signupToken) setSignupToken(response.signupToken);
+  const onSubmit = (data: SignUpParams) => signUp(data, {
+    onSuccess: (response: any) => {
+      if (response.signupToken) setSignupToken(response.signupToken);
 
-        setRegistered(true);
-        setEmail(data.email);
-      },
-      onError: (e) => handleError(e, setError),
-    });
-  };
+      setRegistered(true);
+      setEmail(data.email);
+    },
+    onError: (e) => handleError(e, setError),
+  });
 
   const label = (
     <SimpleGrid
@@ -182,12 +182,32 @@ const SignUp: NextPage = () => {
               />
 
               <Controller
+                name="industries"
+                control={control}
+                render={({ field }) => (
+                  <MultiSelect
+                    {...field}
+                    label="Industries"
+                    size="md"
+                    styles={{ input: { padding: '14px 14px' }, label: { fontSize: 18, fontWeight: 600 } }}
+                    data={industries
+                      ? industries.items.map((i) => ({ value: String(i.id), label: i.name }))
+                      : [{ value: '', label: 'Loading...' }]}
+                    placeholder="Industries"
+                    error={errors.industries?.message}
+                  />
+                )}
+              />
+
+              <Controller
                 name="numberOfWorkers"
                 control={control}
                 render={({ field }) => (
                   <NumberInput
                     {...field}
                     label="Number of workers"
+                    styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+                    size="md"
                     max={100000}
                     placeholder="Number of workers"
                     error={errors.numberOfWorkers?.message}

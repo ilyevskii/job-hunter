@@ -25,7 +25,7 @@ async function validator(ctx: AppKoaContext<ValidatedData>, next: Next) {
 
   ctx.assertError(job, 'Job not found');
   ctx.assertError(user, 'User not found');
-  ctx.assertError(job.employerId === userId && userId === ctx.state.user.id, 'User can see only your job applications');
+  ctx.assertError(job.employerId === ctx.state.user.employer?.id, 'You can see only your job applications');
 
   await next();
 }

@@ -4,10 +4,10 @@ import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { applicationApi } from 'resources/application';
+import { applicationApi } from '../../resources/application';
 
-import { handleError } from 'utils';
-import queryClient from 'query-client';
+import { handleError } from '../../utils';
+import queryClient from '../../query-client';
 
 import ResumeSelect from '../ResumeSelect';
 

@@ -26,6 +26,26 @@ class DatabaseService<T extends object> {
     return result[0];
   }
 
+  public async insertMany(dataArray: Partial<T>[]): Promise<T[]> {
+    if (dataArray.length === 0) return [];
+
+    const fields = Object.keys(dataArray[0]).map(v => `"${v}"`).join(', ');
+
+    const placeholders: string[] = [];
+    const values: any[] = [];
+
+    dataArray.forEach((data, dataIndex) => {
+      const valuePlaceholders = Object.values(data).map((_, valueIndex) => `$${dataIndex * Object.keys(data).length + valueIndex + 1}`);
+      placeholders.push(`(${valuePlaceholders.join(', ')})`);
+      values.push(...Object.values(data));
+    });
+
+    const query = `INSERT INTO "${this.tableName}" (${fields}) VALUES ${placeholders.join(', ')} RETURNING *;`;
+    
+    return this.prisma.$queryRawUnsafe(query, ...values);
+  }
+
+
   public async updateOne(where: Partial<T>, data: Partial<T>): Promise<T | null> {
     const modifiedData = Object.fromEntries(Object.entries(data).filter(([_, v]) => v !== undefined));
 
@@ -65,7 +85,7 @@ class DatabaseService<T extends object> {
     search,
     sort,
   }: {
-    where: Partial<T>,
+    where?: Partial<T>,
     join?: {
       table: string,
       field: string,
@@ -79,11 +99,16 @@ class DatabaseService<T extends object> {
     },
     sort?: Record<string, 'ASC' | 'DESC'>;
   }): Promise<T[] | null> {
-    let conditions = Object.entries(where)
-      .map(([key], index) => `"${this.tableName}"."${key}" = $${index + 1}`)
-      .join(' AND ');
+    let conditions = '';
+    let values: (string | number)[] = [];
 
-    const values = Object.values(where);
+    if (where) {
+      conditions = Object.entries(where)
+        .map(([key], index) => `"${this.tableName}"."${key}" = $${index + 1}`)
+        .join(' AND ');
+
+      values = Object.values(where);
+    }
 
     if (search) {
       const searchCondition = search.columns
@@ -172,19 +197,9 @@ class DatabaseService<T extends object> {
     return Number(result[0].count);
   }
 
-  public async deleteOne(where: Partial<T>): Promise<number> {
-    const conditions = Object.entries(where)
-      .map(([key], index) => `${key} = $${index + 1}`)
-      .join(' AND ');
-    const values = Object.values(where);
-
-    const query = `DELETE FROM "${this.tableName}" WHERE ${conditions} LIMIT 1;`;
-    return this.prisma.$executeRawUnsafe(query, ...values);
-  }
-
   public async deleteMany(where: Partial<T>): Promise<number> {
     const conditions = Object.entries(where)
-      .map(([key], index) => `${key} = $${index + 1}`)
+      .map(([key], index) => `"${key}" = $${index + 1}`)
       .join(' AND ');
     const values = Object.values(where);
 

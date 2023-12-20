@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Loader, Stack, Title, Text, Group } from '@mantine/core';
+import { Loader, Stack, Title, Text, Group, Tooltip } from '@mantine/core';
 
 import { jobApi } from 'resources/job';
 import { accountApi } from 'resources/account';
@@ -79,14 +79,20 @@ const JobCard: FC<JobCardProps> = ({ id }) => {
               <Text>{job.employer.numberOfWorkers}</Text>
             </Group>
 
-            <Group justify="space-between">
-              <Text>Average rating:</Text>
-              <Text>{job.employer.averageRating}</Text>
+            <Group justify="space-between" align="flex-start">
+              <Text>Industries:</Text>
+              <Stack gap={8}>
+                {job.industries.map((i) => (
+                  <Tooltip withArrow arrowSize={8} label={i.description}>
+                    <Text>{i.name}</Text>
+                  </Tooltip>
+                ))}
+              </Stack>
             </Group>
           </Stack>
         </Stack>
 
-        <JobApplications jobId={job.id} userId={account.id} />
+        <JobApplications job={job} userId={account.id} />
       </Stack>
     ) : (
       <Text>

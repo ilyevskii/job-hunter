@@ -5,9 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from 'react-query';
 import { showNotification } from '@mantine/notifications';
 import { NextPage } from 'next';
-import { Button, TextInput, PasswordInput, Stack, Title, NumberInput } from '@mantine/core';
+import { Button, TextInput, PasswordInput, Stack, Title, NumberInput, MultiSelect } from '@mantine/core';
 
 import { accountApi } from 'resources/account';
+import { industryApi } from 'resources/industry';
 
 import { handleError } from 'utils';
 import { RoutePath } from 'routes';
@@ -21,6 +22,7 @@ const schema = z.object({
   name: z.string().min(1, 'Please enter name').max(100),
   location: z.string().min(1, 'Please enter location').max(100),
   numberOfWorkers: z.number().positive('Please enter number of workers').max(100_000),
+  industries: z.array(z.string()).nonempty(),
   password: z.string().regex(
     PASSWORD_REGEX,
     'The password must contain 6 or more characters with at least one letter (a-z) and one number (0-9).',
@@ -35,6 +37,7 @@ const Profile: NextPage = () => {
   const queryClient = useQueryClient();
 
   const { data: account } = accountApi.useGet();
+  const { data: industries } = industryApi.useList();
 
   const {
     register,
@@ -48,6 +51,7 @@ const Profile: NextPage = () => {
       name: account?.employer?.name ?? '',
       location: account?.employer?.location ?? '',
       numberOfWorkers: account?.employer?.numberOfWorkers ?? 0,
+      industries: account?.industries,
     },
   });
 
@@ -107,12 +111,32 @@ const Profile: NextPage = () => {
           />
 
           <Controller
+            name="industries"
+            control={control}
+            render={({ field }) => (
+              <MultiSelect
+                {...field}
+                styles={{ input: { padding: '14px 14px' }, label: { fontSize: 18, fontWeight: 600 } }}
+                label="Industries"
+                size="md"
+                data={industries
+                  ? industries.items.map((i) => ({ value: String(i.id), label: i.name }))
+                  : [{ value: '', label: 'Loading...' }]}
+                placeholder="Select Industries"
+                error={errors.industries?.message}
+              />
+            )}
+          />
+
+          <Controller
             name="numberOfWorkers"
             control={control}
             render={({ field }) => (
               <NumberInput
                 {...field}
                 label="Number of workers"
+                styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+                size="md"
                 max={100000}
                 placeholder="Number of workers"
                 error={errors.numberOfWorkers?.message}

@@ -15,10 +15,12 @@ import { z } from 'zod';
 import { useForm, useController } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { jobApi } from 'resources/job';
+import { jobApi } from '../../resources/job';
 
-import { handleError } from 'utils';
-import queryClient from 'query-client';
+import { handleError } from '../../utils';
+import queryClient from '../../query-client';
+
+import { JobWithEmployer } from '../../types';
 
 const schema = z.object({
   title: z.string().min(1, 'Please enter job title').max(255),
@@ -28,25 +30,29 @@ const schema = z.object({
   salaryTo: z.number().nonnegative().min(0, 'Please enter salary to').max(1_000_000),
 });
 
-type CreateJobParams = z.infer<typeof schema>;
+type UpdateJobParams = z.infer<typeof schema>;
 
-const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
+interface UpdateJobModalProps extends ModalProps {
+  job: JobWithEmployer;
+}
+const UpdateJobModal: FC<UpdateJobModalProps> = ({ job, ...rest }) => {
   const {
     register,
     handleSubmit,
     setError,
     control,
     formState: { errors },
-  } = useForm<CreateJobParams>({
+  } = useForm<UpdateJobParams>({
     resolver: zodResolver(schema),
+    defaultValues: job as any,
   });
 
-  const { mutate: create, isLoading: isCreateLoading } = jobApi.useCreate<CreateJobParams>();
+  const { mutate: update, isLoading: isUpdateLoading } = jobApi.useUpdate<UpdateJobParams>(job.id);
 
   const { field: fieldFrom } = useController({ control, name: 'salaryFrom' });
   const { field: fieldTo } = useController({ control, name: 'salaryTo' });
 
-  const onSubmit = (data: CreateJobParams) => create(data, {
+  const onSubmit = (data: UpdateJobParams) => update(data, {
     onSuccess: async () => {
       await queryClient.invalidateQueries('jobs');
 
@@ -57,7 +63,7 @@ const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
 
   return (
     <Modal
-      title="Create new job"
+      title={`Update ${job.title}`}
       {...rest}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,6 +79,8 @@ const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
           <Textarea
             {...register('description')}
             label="Description"
+            styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+            size="md"
             maxLength={2500}
             placeholder="Description"
             error={errors.description?.message}
@@ -108,6 +116,8 @@ const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
               {...fieldFrom}
               min={0}
               max={1000000}
+              styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+              size="md"
               label="From"
               placeholder="From"
               maxLength={7}
@@ -118,6 +128,8 @@ const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
               {...fieldTo}
               min={0}
               max={1000000}
+              styles={{ label: { fontSize: 18, fontWeight: 600 } }}
+              size="md"
               label="To"
               placeholder="To"
               maxLength={7}
@@ -128,15 +140,15 @@ const CreateJobModal: FC<ModalProps> = ({ ...rest }) => {
 
         <Button
           type="submit"
-          loading={isCreateLoading}
+          loading={isUpdateLoading}
           fullWidth
           mt={34}
         >
-          Create
+          Update
         </Button>
       </form>
     </Modal>
   );
 };
 
-export default CreateJobModal;
+export default UpdateJobModal;

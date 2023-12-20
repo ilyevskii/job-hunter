@@ -6,6 +6,8 @@ export const DATABASE_DOCUMENTS = {
   APPLICATIONS: 'Application',
   RESUMES: 'Resume',
   FEEDBACKS: 'Feedback',
+  INDUSTRIES: 'Industry',
+  EMPLOYER_INDUSTRIES: 'Employer_Industry',
 };
 
 export const COOKIES = {

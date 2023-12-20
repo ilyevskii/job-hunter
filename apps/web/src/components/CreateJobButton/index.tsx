@@ -1,7 +1,7 @@
 import { useDisclosure } from '@mantine/hooks';
 import { Button } from '@mantine/core';
 
-import CreateJobModal from '../CreateJobModal';
+import CreateJobModal from './CreateJobModal';
 
 const CreateJobButton = () => {
   const [opened, { close, open }] = useDisclosure();

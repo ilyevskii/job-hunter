@@ -1,19 +1,23 @@
 import { FC } from 'react';
-import { Stack, Group, Text, Title } from '@mantine/core';
+import { Stack, Group, Text, Title, Divider } from '@mantine/core';
 
 import { applicationApi } from 'resources/application';
 
+import { JobWithEmployer } from 'types';
+
 import ViewResumeButton from '../ViewResumeButton';
 import CreateFeedbackButton from '../CreateFeebackButton';
+import UpdateJobButton from '../UpdateJobButton';
+import DeleteJobButton from '../DeleteJobButton';
 
 interface JobApplicationsProps {
-  jobId: number;
+  job: JobWithEmployer;
   userId: number;
 }
 
-const JobApplications: FC<JobApplicationsProps> = ({ jobId, userId }) => {
+const JobApplications: FC<JobApplicationsProps> = ({ job, userId }) => {
   const { data: applications } = applicationApi.useList({
-    jobId,
+    jobId: job.id,
     userId,
   });
 
@@ -21,6 +25,16 @@ const JobApplications: FC<JobApplicationsProps> = ({ jobId, userId }) => {
 
   return (
     <Stack>
+      <Divider />
+
+      <Stack ml="auto">
+        Options:
+        <Group mr={30}>
+          <UpdateJobButton job={job} />
+          <DeleteJobButton job={job} />
+        </Group>
+      </Stack>
+
       <Title order={2}>Applications</Title>
 
       <Group>

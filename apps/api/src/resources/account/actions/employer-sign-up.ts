@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { userService } from 'resources/user';
 import { employerService } from 'resources/employer';
+import { employerIndustryService } from 'resources/employerIndustry';
 
 import { validateMiddleware } from 'middlewares';
 import { emailService } from 'services';
@@ -15,6 +16,7 @@ const schema = z.object({
   name: z.string().min(1, 'Please enter name').max(100),
   location: z.string().min(1, 'Please enter location').max(100),
   numberOfWorkers: z.number().positive('Please enter number of workers').max(100_000),
+  industries: z.array(z.string()).nonempty(),
   email: z.string().regex(EMAIL_REGEX, 'Email format is incorrect.'),
   password: z.string().regex(
     PASSWORD_REGEX,
@@ -45,6 +47,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
     numberOfWorkers,
     email,
     password,
+    industries,
   } = ctx.validatedData;
 
   const [hash, signupToken] = await Promise.all([
@@ -59,7 +62,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
     signupToken,
   });
 
-  await Promise.all([
+  const [_, employer] = await Promise.all([
     emailService.sendTemplate<Template.VERIFY_EMAIL>({
       to: user.email,
       subject: 'Please Confirm Your Email Address for Ship',
@@ -76,6 +79,11 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
       name,
     }),
   ]);
+
+  await employerIndustryService.insertMany(industries.map((i) => {
+    if (i) return { industryId: +i, employerId: employer.id };
+    return {};
+  }));
 
   ctx.body = config.IS_DEV ? { signupToken } : {};
 }

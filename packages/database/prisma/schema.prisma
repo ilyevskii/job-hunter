@@ -88,14 +88,6 @@ model Review {
   createdOn  DateTime @default(now())
 }
 
-model Comment {
-  id        Int      @id @default(autoincrement())
-  userId    Int?
-  jobId     Int?
-  text      String
-  createdOn DateTime @default(now())
-}
-
 model Feedback {
   id            Int      @id @default(autoincrement())
   employerId    Int?
@@ -108,13 +100,4 @@ model Employer_Industry {
   id         Int  @id @default(autoincrement())
   employerId Int?
   industryId Int?
-}
-
-model Admin {
-  id                 Int     @id @default(autoincrement())
-  userId             Int?
-  canEditJobs        Boolean @default(false)
-  canDeleteUsers     Boolean @default(false)
-  canManageEmployers Boolean @default(false)
-  canEditReviews     Boolean @default(false)
 }
