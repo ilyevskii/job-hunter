@@ -88,19 +88,6 @@ CREATE TABLE "Token" (
     CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
 );
 
-CREATE TABLE "Review" (
-    "id" SERIAL NOT NULL,
-    "employerId" INT,
-    "userId" INT,
-    "rating" INT,
-    "comments" TEXT,
-    "createdOn" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Review_pkey" PRIMARY KEY ("id"),
-    CONSTRAINT "Review_employerId_fkey" FOREIGN KEY ("employerId") REFERENCES "Employer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION,
-    CONSTRAINT "Review_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
 CREATE TABLE "Feedback" (
     "id" SERIAL NOT NULL,
     "employerId" INT,

@@ -79,15 +79,6 @@ model Token {
   expiresOn DateTime?
 }
 
-model Review {
-  id         Int      @id @default(autoincrement())
-  employerId Int?
-  userId     Int?
-  rating     Int
-  comments   String?
-  createdOn  DateTime @default(now())
-}
-
 model Feedback {
   id            Int      @id @default(autoincrement())
   employerId    Int?
