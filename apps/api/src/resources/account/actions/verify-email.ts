@@ -43,10 +43,10 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
 
   await emailService.sendTemplate<Template.SIGN_UP_WELCOME>({
     to: user.email,
-    subject: 'Welcome to Ship Community!',
+    subject: 'Welcome to Community!',
     template: Template.SIGN_UP_WELCOME,
     params: {
-      firstName: user.firstName,
+      firstName: user.firstName ?? 'employer',
       href: `${config.WEB_URL}/sign-in`,
     },
   });

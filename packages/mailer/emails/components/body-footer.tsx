@@ -7,11 +7,7 @@ const BodyFooter = () => (
     {' '}
     {new Date().getFullYear()}
     {' '}
-    Ship, All Rights Reserved
-    {' '}
-    <br />
-    651 N Broad St, Suite 206, Middletown,
-    19709, Delaware, United States
+    All Rights Reserved
   </Text>
 );
 

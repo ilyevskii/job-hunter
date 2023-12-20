@@ -48,7 +48,7 @@ async function handler(ctx: AppKoaContext<ValidatedData>) {
 
   await emailService.sendTemplate<Template.RESET_PASSWORD>({
     to: user.email,
-    subject: 'Password Reset Request for Ship',
+    subject: 'Password Reset Request',
     template: Template.RESET_PASSWORD,
     params: {
       firstName: user.firstName ?? user.employer?.name ?? '',

@@ -1,19 +1,12 @@
 import React from 'react';
-import { Column, Img, Row, Section } from '@react-email/components';
-
-const logoURL = 'https://ship-demo.fra1.cdn.digitaloceanspaces.com/assets/logo.png';
+import { Column, Text, Row, Section } from '@react-email/components';
 
 const Header = () => (
   <>
     <Row className="p-6">
-      <Column align="center">
-        <Img
-          src={logoURL}
-          width="88"
-          height="44"
-          alt="Ship"
-        />
-      </Column>
+      <Text>
+        DB Lab
+      </Text>
     </Row>
 
     <Section className="flex w-full">

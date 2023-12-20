@@ -6,7 +6,6 @@ import { jobApi } from 'resources/job';
 
 import { handleError } from 'utils';
 import { RoutePath } from 'routes';
-import queryClient from 'query-client';
 
 import { JobWithEmployer } from 'types';
 

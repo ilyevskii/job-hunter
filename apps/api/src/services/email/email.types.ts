@@ -1,10 +1,14 @@
 import { Template, TemplateProps } from 'mailer';
 
-export type From = { email: string, name: string };
-
 export interface EmailServiceConstructorProps {
   apiKey: string | undefined,
-  from: From,
+  from: string,
+}
+
+interface Attachment {
+  content?: string | Buffer;
+  filename?: string | false;
+  path?: string;
 }
 
 export interface SendTemplateParams<T extends Template> {
@@ -12,11 +16,5 @@ export interface SendTemplateParams<T extends Template> {
   subject: string,
   template: T,
   params: TemplateProps[T],
-}
-
-export interface SendSendgridTemplateParams {
-  to: string,
-  subject: string,
-  templateId: string,
-  dynamicTemplateData: { [key: string]: unknown },
+  attachments?: Attachment[],
 }

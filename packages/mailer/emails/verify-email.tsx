@@ -13,7 +13,7 @@ export const VerifyEmail:FC<VerifyEmailProps> = ({
   firstName = 'John',
   href = 'https://ship.paralect.com',
 }) => (
-  <Layout previewText="Welcome on board the Ship!">
+  <Layout previewText="Welcome on board!">
     <Text>
       Dear
       {' '}
@@ -22,7 +22,7 @@ export const VerifyEmail:FC<VerifyEmailProps> = ({
     </Text>
 
     <Text>
-      Welcome to Ship! We are excited to have you on board.
+      Welcome! We are excited to have you on board.
     </Text>
 
     <Text>

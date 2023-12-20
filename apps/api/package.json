@@ -29,7 +29,9 @@
     "@socket.io/redis-adapter": "8.1.0",
     "@socket.io/redis-emitter": "5.1.0",
     "app-constants": "workspace:*",
+    "app-types": "npm:types",
     "bcryptjs": "2.4.3",
+    "database": "workspace:*",
     "dotenv": "16.0.3",
     "google-auth-library": "8.7.0",
     "koa": "2.14.1",
@@ -51,11 +53,10 @@
     "prisma": "5.6.0",
     "psl": "1.9.0",
     "redis": "4.6.5",
+    "resend": "2.0.0",
     "socket.io": "4.6.1",
-    "app-types": "npm:types",
     "winston": "3.8.2",
-    "zod": "3.21.4",
-    "database": "workspace:*"
+    "zod": "3.21.4"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "4.1.7",

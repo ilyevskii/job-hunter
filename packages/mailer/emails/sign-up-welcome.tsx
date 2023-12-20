@@ -13,7 +13,7 @@ export const SignUpWelcome:FC<SignUpWelcomeProps> = ({
   firstName = 'John',
   href = 'https://ship.paralect.com',
 }) => (
-  <Layout previewText="Welcome on board the Ship!">
+  <Layout previewText="Welcome on board!">
     <Text>
       Dear
       {' '}
@@ -22,7 +22,7 @@ export const SignUpWelcome:FC<SignUpWelcomeProps> = ({
     </Text>
 
     <Text>
-      We are excited to have you join our growing Ship community.
+      We are excited to have you join our growing community.
     </Text>
 
     <Text>

@@ -1,53 +1,46 @@
+import { Resend } from 'resend';
+
 import config from 'config';
-import sendgrid from '@sendgrid/mail';
+import logger from 'logger';
 
 import { renderEmailHtml, Template } from 'mailer';
 
-import { From, EmailServiceConstructorProps, SendTemplateParams, SendSendgridTemplateParams } from './email.types';
+import { EmailServiceConstructorProps, SendTemplateParams } from './email.types';
 
 class EmailService {
+  resend?: Resend;
+
   apiKey: string | undefined;
 
-  from: From;
+  from: string;
 
   constructor({ apiKey, from }: EmailServiceConstructorProps) {
     this.apiKey = apiKey;
     this.from = from;
 
-    if (apiKey) sendgrid.setApiKey(apiKey);
+    if (apiKey) this.resend = new Resend(apiKey);
   }
 
-  async sendTemplate<T extends Template>({ to, subject, template, params }: SendTemplateParams<T>) {
-    if (!this.apiKey) return null;
+  async sendTemplate<T extends Template>({ to, subject, template, params, attachments }: SendTemplateParams<T>) {
+    try {
+      if (!this.resend) return null;
 
-    const html = await renderEmailHtml({ template, params });
+      const html = await renderEmailHtml({ template, params });
 
-    return sendgrid.send({
-      from: this.from,
-      to,
-      subject,
-      html,
-    });
-  }
-
-  async sendSendgridTemplate({ to, subject, templateId, dynamicTemplateData }: SendSendgridTemplateParams) {
-    if (!this.apiKey) return null;
-
-    return sendgrid.send({
-      from: this.from,
-      to,
-      subject,
-      templateId,
-      dynamicTemplateData,
-    });
+      return await this.resend.emails.send({
+        from: this.from,
+        to,
+        subject,
+        html,
+        attachments,
+      });
+    } catch (err) {
+      logger.error('Failed to send email', err);
+    }
   }
 }
 
-
 export default new EmailService({
-  apiKey: config.SENDGRID_API_KEY,
-  from: {
-    email: 'notifications@ship.com',
-    name: 'Ship',
-  },
+  apiKey: config.RESEND_API_KEY,
+  from: 'DB Lab <no-reply@havensense.com>',
 });
