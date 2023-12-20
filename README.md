@@ -32,13 +32,6 @@ Andreyeuski Ilya 153501
 - Employers can change the status of applications (e.g., shortlisted, rejected, or accepted).
 - Employers can respond to user reviews, addressing concerns or thanking users for positive feedback.
 
-### 4. Admin Flow:
-- Admins can manage the list of industries, adding, editing, or deleting entries.
-- Admins can view, edit, or delete any employer profile.
-- Admins can view, edit, or delete any user profile.
-- Admins can manage job listings, including approving, editing, or deleting them.
-- Admins can manage user reviews and comments, including approving, editing, or deleting them.
-
 ## Models restrictions
 
 ### User
@@ -86,30 +79,11 @@ Andreyeuski Ilya 153501
 - value (string): Not null.
 - createdAt (timestamp), expiresAt (timestamp): Not null and should be valid timestamps.
 
-### Review
-- id (integer): Must be unique and not null.
-- employerId (integer): Not null and must reference a valid Employer.id.
-- userId (integer): Not null and must reference a valid User.id.
-- rating (integer): Not null and possibly between a range, e.g., 1-5.
-- createdAt (timestamp): Not null and should be a valid timestamp.
-
-### Comment
-- id (integer): Must be unique and not null.
-- userId (integer): Not null and must reference a valid User.id.
-- jobId (integer): Not null and must reference a valid Job.id.
-- text (string): Not null.
-- createdAt (timestamp): Not null and should be a valid timestamp.
-
 ### Feedback
 - id (integer): Must be unique and not null.
 - applicationId (integer): Not null and must reference a valid Application.id.
 - content (string): Not null.
 - createdAt (timestamp): Not null and should be a valid timestamp.
-
-### Admin
-- id (integer): Must be unique and not null.
-- userId (integer): Not null and must reference a valid User.id.
-- The boolean permissions fields: Should either be true or false.
 
 ## Database diagram
 
